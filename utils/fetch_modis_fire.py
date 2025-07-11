@@ -12,15 +12,15 @@ from utils.gee_utils import zonal_stats, month_agg_sp_mean
 from utils.get_date_range import get_date_range
 import os
 
-def fetch_modis_fire(DHIS_TOKEN, DHIS_URL, PARENT_OU, OU_LEVEL, orgUnit=None):
+def fetch_modis_fire(dhis_token=None, dhis_url=None, PARENT_OU=None, OU_LEVEL=None, orgUnit=None):
     """
     Extracts mean Aerosol Optical Depth from MODIS satellite by month for orgUnits from DHIS2
 
     Args:
-        DHIS_TOKEN (string) : personal access token for DHIS instance
-        DHIS_URL (string) : base url of DHIS for APIs
-        PARENT_OU (string) : id of orgUnit that contains the geojsons to extract for
-        OU_LEVEL (string) : hierarchical orgUnit level for the geojson to extract for
+        dhis_token (string, optional) : personal access token for DHIS instance
+        dhis_url (string, optional) : base url of DHIS for APIs
+        PARENT_OU (string, optional) : id of orgUnit that contains the geojsons to extract for
+        OU_LEVEL (string, optional) : hierarchical orgUnit level for the geojson to extract for
         orgUnit (ee.FeatureCollection, optional) orgUnit polygons to use for extractoin. If None, will get from DHIS2 instance
 
     Returns:
@@ -29,12 +29,12 @@ def fetch_modis_fire(DHIS_TOKEN, DHIS_URL, PARENT_OU, OU_LEVEL, orgUnit=None):
 
     #get orgUnits from DHIS2 if not provided
     if orgUnit is None:
-        org_units = get_dhis_geojson(PARENT_OU=PARENT_OU, OU_LEVEL=OU_LEVEL, DHIS_TOKEN=DHIS_TOKEN, DHIS_URL=DHIS_URL)
+        org_units = get_dhis_geojson(PARENT_OU=PARENT_OU, OU_LEVEL=OU_LEVEL, dhis_token=dhis_token, dhis_url=dhis_url)
         orgUnit = ee.FeatureCollection(org_units)
 
     date_range =  get_date_range(end_months_ago = 1, end_on_last_day=False)
 
-    ic = ee.ImageCollection("MODIS/061/MYD14A2").filterBounds(fc).filterDate("2015-01-01", datetime.today())
+    ic = ee.ImageCollection("MODIS/061/MYD14A2").filterBounds(orgUnit).filterDate("2015-01-01", datetime.today())
     #defaut parameters from first image
     img_rep = ic.first()
     default_scale = img_rep.select([0]).projection().nominalScale().getInfo()
@@ -73,7 +73,7 @@ def fetch_modis_fire(DHIS_TOKEN, DHIS_URL, PARENT_OU, OU_LEVEL, orgUnit=None):
     def calc_spatial_mean(image):
         # Reduce the image by regions
         reduced = image.reduceRegions(
-            collection=fc,
+            collection=orgUnit,
             reducer=ee.Reducer.mean(),  # Spatial mean
             scale=default_scale,
             crs="EPSG:4326"
@@ -111,6 +111,4 @@ def fetch_modis_fire(DHIS_TOKEN, DHIS_URL, PARENT_OU, OU_LEVEL, orgUnit=None):
         "dataValues": df_long.to_dict(orient="records")
     }
 
-    data_json = json.dumps(df_dict, indent=2)
-
-    return data_json
+    return df_dict

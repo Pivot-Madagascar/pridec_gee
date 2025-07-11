@@ -12,12 +12,12 @@ from utils.gee_utils import month_agg_sp_mean, mask_s2_clouds, add_evi, add_gao,
 from utils.get_date_range import get_date_range
 import os
 
-def fetch_sen2_climate(DHIS_TOKEN=None, DHIS_URL=None, PARENT_OU=None, OU_LEVEL=None, orgUnit=None):
+def fetch_sen2_climate(dhis_token=None, dhis_url=None, PARENT_OU=None, OU_LEVEL=None, orgUnit=None):
     """
     Extract EVI, MDNWI, and NDWI GAO at monthly frequency from Sentinel-2 data
     Args:
-        DHIS_TOKEN (string,optional) : personal access token for DHIS instance
-        DHIS_URL (string) : base url of DHIS for APIs
+        dhis_token (string,optional) : personal access token for DHIS instance
+        dhis_url (string) : base url of DHIS for APIs
         PARENT_OU (string) : id of orgUnit that contains the geojsons to extract for
         OU_LEVEL (string) : hierarchical orgUnit level for the geojson to extract for
         orgUnit (ee.FeatureCollection, optional) orgUnit polygons to use for extraction. If None, will get from DHIS2 instance
@@ -27,7 +27,7 @@ def fetch_sen2_climate(DHIS_TOKEN=None, DHIS_URL=None, PARENT_OU=None, OU_LEVEL=
     """
      #get orgUnits from DHIS2 if not provided
     if orgUnit is None:
-        org_units = get_dhis_geojson(PARENT_OU=PARENT_OU, OU_LEVEL=OU_LEVEL, DHIS_TOKEN=DHIS_TOKEN, DHIS_URL=DHIS_URL)
+        org_units = get_dhis_geojson(PARENT_OU=PARENT_OU, OU_LEVEL=OU_LEVEL, dhis_token=dhis_token, dhis_url=dhis_url)
         orgUnit = ee.FeatureCollection(org_units)
 
     date_range =  get_date_range(end_months_ago = 1, end_on_last_day=False, start_months_ago =3)
@@ -66,6 +66,4 @@ def fetch_sen2_climate(DHIS_TOKEN=None, DHIS_URL=None, PARENT_OU=None, OU_LEVEL=
         "dataValues": df_long.to_dict(orient="records")
     }
 
-    data_json = json.dumps(df_dict, indent=2)
-
-    return data_json
+    return df_dict

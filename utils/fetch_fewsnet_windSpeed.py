@@ -12,13 +12,13 @@ from utils.gee_utils import zonal_stats, month_agg_sp_mean
 from utils.get_date_range import get_date_range
 import os
 
-def fetch_fewsnet_windSpeed(DHIS_TOKEN=None, DHIS_URL=None, PARENT_OU=None, OU_LEVEL=None, orgUnit=None):
+def fetch_fewsnet_windSpeed(dhis_token=None, dhis_url=None, PARENT_OU=None, OU_LEVEL=None, orgUnit=None):
     """
     Returns json of windspeed from fewsnet data
 
     Args:
-        DHIS_TOKEN (string, optional) : personal access token for DHIS instance
-        DHIS_URL (string, optional) : base url of DHIS for APIs
+        dhis_token (string, optional) : personal access token for DHIS instance
+        dhis_url (string, optional) : base url of DHIS for APIs
         PARENT_OU (string, optional) : id of orgUnit that contains the geojsons to extract for
         OU_LEVEL (string,  optional) : hierarchical orgUnit level for the geojson to extract for
         orgUnit (ee.FeatureCollection, optional) orgUnit polygons to use for extractoin. If None, will get from DHIS2 instance
@@ -28,7 +28,7 @@ def fetch_fewsnet_windSpeed(DHIS_TOKEN=None, DHIS_URL=None, PARENT_OU=None, OU_L
     """
     #get orgUnits from DHIS2 if not provided
     if orgUnit is None:
-        org_units = get_dhis_geojson(PARENT_OU=PARENT_OU, OU_LEVEL=OU_LEVEL, DHIS_TOKEN=DHIS_TOKEN, DHIS_URL=DHIS_URL)
+        org_units = get_dhis_geojson(PARENT_OU=PARENT_OU, OU_LEVEL=OU_LEVEL, dhis_token=dhis_token, dhis_url=dhis_url)
         orgUnit = ee.FeatureCollection(org_units)
 
     date_range =  get_date_range(end_months_ago = 2,
@@ -47,7 +47,7 @@ def fetch_fewsnet_windSpeed(DHIS_TOKEN=None, DHIS_URL=None, PARENT_OU=None, OU_L
     #reformat for DHIS2
     df = pd.DataFrame(result)
     #renaame to PRDIE-C dhis2 code
-    df = df.rename(columns={'mean': 'pridec_climate_windSpeed'})
+    df = df.rename(columns={'mean': 'pridec_climate_windspeed'})
 
     df_long = df.melt(
         id_vars=['orgUnit', 'period'],
@@ -64,6 +64,4 @@ def fetch_fewsnet_windSpeed(DHIS_TOKEN=None, DHIS_URL=None, PARENT_OU=None, OU_L
         "dataValues": df_long.to_dict(orient="records")
     }
 
-    data_json = json.dumps(df_dict, indent=2)
-
-    return data_json
+    return df_dict
