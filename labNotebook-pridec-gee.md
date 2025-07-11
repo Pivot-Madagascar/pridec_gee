@@ -1,8 +1,18 @@
 # Notes for PRIDE-C GEE package
 
+## Common commands
+
+`pipreqs`: save requirements.txt file with list of dependencies
+`source .venv/bin/active`: activate venv
+
 ## 2025-07-11
 
-All scripts and full workflow now in Python. Copying over to this directory and starting git repo.
+All scripts and full workflow now in Python. Copying over to this directory and starting git repo. Had to do some extra set up of the `venv` and package management.
+
+Was ahving an issue with `post_dataValues.py` because the json was getting weirdly formatted in python. I have fixed it by having the functions return `dictionary` rather than json_dump.
+
+**TO DO:**
+- fix fetch_sen1_flood.py, which is still giving an odd return format from GEE (not sure what is happening there)
 
 ## 2025-04-11
 

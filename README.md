@@ -32,14 +32,14 @@ This requires Python 3.
 1. Clone the repo
 
 ```
-git clone REPONAME
+git clone https://github.com/Pivot-Madagascar/pridec-gee.git
 ```
 
 2. Initiate a `venv` in the root folder and install dependencies
 
 ```
-python3 -m venv venv --prompt="pridec-gee"
-. venv/bin/activate
+python3 -m venv .venv --prompt="pridec-gee"
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
@@ -56,6 +56,6 @@ GEE_PROJECT= YOUR_GEE_PROJECT_NAME
 
 4. Run `fetch_all_climate_pridec.py` file
 
-This python file goes through the climate variables one by one to download them from GEE and then POST to a DHIS2 instance. It is curently set up to get geojons from the PRIDE-C prod instance, and then post the new climate data to a local test instance (to avoid interfering with the production server). Please update as needed for your own configuration.
+This python file goes through the climate variables one by one to download them from GEE and then POST to a DHIS2 instance. It is curently set up to use a local test instance launched with `d2 to avoid interfering with the production server. Please update as needed for your own configuration (i.e. base_url, token, etc.).
 
 *Note: Each function/step of this file will likely correspond to a controller in the ultimate ETL app*
