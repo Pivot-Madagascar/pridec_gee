@@ -14,7 +14,7 @@ import os
 
 def fetch_fewsnet_windSpeed(dhis_token=None, dhis_url=None, PARENT_OU=None, OU_LEVEL=None, orgUnit=None):
     """
-    Returns json of windspeed from fewsnet data
+    Fetch FEWSNET Windspeed data from GEE for specified orgUnits
 
     Args:
         dhis_token (string, optional) : personal access token for DHIS instance
@@ -24,7 +24,7 @@ def fetch_fewsnet_windSpeed(dhis_token=None, dhis_url=None, PARENT_OU=None, OU_L
         orgUnit (ee.FeatureCollection, optional) orgUnit polygons to use for extractoin. If None, will get from DHIS2 instance
 
     Returns:
-        something
+        json of windspeed from fewsnet data
     """
     #get orgUnits from DHIS2 if not provided
     if orgUnit is None:

@@ -5,6 +5,34 @@
 `pipreqs`: save requirements.txt file with list of dependencies
 `source .venv/bin/active`: activate venv
 
+## 2025-08-08
+
+Finishing up the sen1 flooding workflow. I will just use this like normal to update PRIDE-C for now so it is done.
+
+To add to a docker workflow, I will need to change it to use a GEE token instead of ee.Authorize(), I think? Done following instructions here: https://developers.google.com/earth-engine/guides/service_account#use-a-service-account-with-a-private-key. Updated README.md to take this into account.
+
+this means it should mostly be ready for Docker, but I can work on that next week.
+
+**TO DO:**
+- functionality for deleting old climate data when needed: I think this can just be my own util script in `pridec-utils`
+- add tests
+- combine into an actual package? or just leave as is within docker
+
+## 2025-08-07
+
+Working on integrating this into the Docker workflow. I may add as a service? But for now, it is just launched locally.
+
+Updating the env variables to match that used by the Docker workflow so the same `.env` file can be used. also added some notification messages for the user.
+
+Fixed the bugs in the sen1 flooding. some were coming from the ARD code and some were coming from mine. All that is left to do is change the `comm_fkt` to `orgUnit` and format for JSONs.
+
+**TO DO:**
+- ~~fix fetch_sen1_flood.py, which is still giving an odd return format from GEE (not sure what is happening there)~~
+- ~~option to just POST more recent climate data (I am 99% sure we already do this)~~
+- functionality for deleting old cliamte data when needed (sometimes partial months will mess things up)
+- ~~function to check quality of climate data [remove outliers? ensure it is in a reasonable range for each variable]~~: This is done in each variables fetch now.
+- write tests? or will this be in the ETL package?
+
 ## 2025-07-11
 
 All scripts and full workflow now in Python. Copying over to this directory and starting git repo. Had to do some extra set up of the `venv` and package management.
@@ -13,6 +41,10 @@ Was ahving an issue with `post_dataValues.py` because the json was getting weird
 
 **TO DO:**
 - fix fetch_sen1_flood.py, which is still giving an odd return format from GEE (not sure what is happening there)
+- option to just POST more recent climate data (I am 99% sure we already do this)
+- functionality for deleting old cliamte data when needed (sometimes partial months will mess things up)
+- function to check quality of climate data [remove outliers? ensure it is in a reasonable range for each variable]
+- write tests? or will this be in the ETL package?
 
 ## 2025-04-11
 

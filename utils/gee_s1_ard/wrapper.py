@@ -9,10 +9,10 @@ Description: A wrapper function to derive the Sentinel-1 ARD
 
 
 import ee
-from . import border_noise_correction as bnc
-from . import speckle_filter as sf
-from . import terrain_flattening as trf
-from . import helper
+from utils.gee_s1_ard import border_noise_correction as bnc
+from utils.gee_s1_ard import speckle_filter as sf
+from utils.gee_s1_ard import terrain_flattening as trf
+from utils.gee_s1_ard import helper
 
 # ee.Initialize()
 
@@ -90,7 +90,7 @@ def s1_preproc(params):
     if TERRAIN_FLATTENING_ADDITIONAL_LAYOVER_SHADOW_BUFFER is None:
         TERRAIN_FLATTENING_ADDITIONAL_LAYOVER_SHADOW_BUFFER = 0
     if FORMAT is None:
-        FORMAT = 'DB'
+        FORMAT = 'LINEAR'
     if ORBIT is None:
         ORBIT = 'DESCENDING'
 
@@ -191,8 +191,9 @@ def s1_preproc(params):
     # 5. OUTPUT
     #######################
 
-    if (FORMAT == 'DB'):
-        s1_1 = s1_1.map(helper.lin_to_db)
+    #commenting out becuase this was leading to weird errors
+    # if (FORMAT == 'DB'):
+    #     s1_2 = s1_1.map(helper.lin_to_db)
         
         
     #clip to roi
@@ -220,4 +221,5 @@ def s1_preproc(params):
                                                  maxPixels=1e13)
             task.start()
             print('Exporting {} to {}'.format(name, assetId))
+            
     return s1_1

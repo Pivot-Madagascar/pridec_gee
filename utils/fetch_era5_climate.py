@@ -65,6 +65,4 @@ def fetch_era5_climate(dhis_token=None, dhis_url=None, PARENT_OU=None, OU_LEVEL=
         "dataValues": df_long.to_dict(orient="records")
     }
 
-    # data_json = json.dumps(df_dict, indent=2)
-
     return df_dict

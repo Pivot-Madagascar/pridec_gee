@@ -7,19 +7,28 @@ from utils.get_date_range import get_date_range
 from utils.gee_s1_ard.wrapper import s1_preproc
 from utils.gee_s1_ard.helper import add_ratio_lin, lin_to_db2
 
-def fetch_sen1_flood(Self):
+def fetch_sen1_flood(rice_geojson_file, test_run=True):
     """
-    Extract Ricefield flooding from Sentinel-1 data. Requires access to GEE asset containing major rice fields
+    Extract Ricefield flooding from Sentinel-1 data. This is specific to Ifanadiana district for now
 
     Args:
+        rice_geojson_file (string) : path to geojson file containing rice fields where you want to extract flooding
+        test_run (bool) : whether to perofrm a test on only 10 images. Useful because this treatment can take a long time
 
     Returns:
         json of flooding data formatted for DHIS2 as dataValues
     """
-     
-    geom = ee.FeatureCollection("projects/ee-mevans-pridec/assets/major-rice") 
-    bbox = ee.Geometry.Rectangle([46,-23,49.5,-19])
-    date_range =  get_date_range(end_months_ago = 4, end_on_last_day=True, start_months_ago = 8)
+    # rice_geojson_file = "data/major-rice-orgUnit.geojson"
+    with open(rice_geojson_file) as f:
+        geojson_data = json.load(f)
+
+    geom = ee.FeatureCollection(geojson_data)
+    rice_area = geom.map(
+        lambda f: f.set("area", f.geometry().area())
+    )
+
+    bbox = ee.Geometry.Rectangle([46,-23,49.5,-19], 'EPSG:4326')
+    date_range =  get_date_range(end_months_ago = 1, end_on_last_day=True, start_months_ago = 3)
 
     fxparams = {
         # 1. Data selection
@@ -47,7 +56,7 @@ def fetch_sen1_flood(Self):
         "TERRAIN_FLATTENING_ADDITIONAL_LAYOVER_SHADOW_BUFFER": 0,
 
         # 5. Output
-        "FORMAT": 'DB',
+        "FORMAT": 'LINEAR',
         "CLIP_TO_ROI": False,
         "SAVE_ASSET": False,
         "ASSET_ID": "asset_id"
@@ -59,79 +68,82 @@ def fetch_sen1_flood(Self):
 
     # Threshold based on Randriamihaja et al. 2025 (doi:10.1186/s12936-025-05344-3)
     def threshold_flood(image):
-        flood = image.select('VH').lte(-15.9279).rename('floodProp')
-        flood = flood.updateMask(flood)  # explicitly mask out zeros
-        flood = flood.uint8()  # Ensure it's numeric for reducers
+        flood = image.select('VH').lte(-15.9279).rename('floodProp').uint8()
         return flood.set('date', image.date().format('YYYY-MM-dd'))
     
     
         #extract mean to each rice field
     def reduce_by_regions(image):
         return image.select('floodProp').reduceRegions(
-            collection=fxparams["GEOMETRY"],
+            collection=rice_area,
             reducer=ee.Reducer.mean(),
-            scale=10,
-            crs='EPSG:4326'
+            scale=10
         ).map(lambda f: f.set('date', image.get('date')).setGeometry(None))
     
     def format_feature(feature):
         return ee.Feature(None, {
-            'comm_fkt': feature.getString('comm_fkt'),
+            'orgUnit': feature.getString('orgUnit'),
             'rice_id': feature.getString('id'),
             'date': feature.getString('date'),
-            'floodProp': feature.get('mean')
-        })
+            'floodProp': feature.get('mean'),
+            'rice_area': feature.get('area')}
+        )
     
-
-    ## STILL NOT WORKING, NOT SURE WHY. MAY BE DUE TO MASKING OR LITERAL MISSING IMAGES
     image_flood = s1_processed.map(threshold_flood)
+    if test_run:
+        image_list = image_flood.limit(10).toList(10)  #for testing
+    else:
+        image_list = image_flood.toList(image_flood.size())
 
-    sample = image_flood.limit(25)
+    n_image = image_list.size().getInfo()
+    dfs = []
 
-    sample_result = sample.map(reduce_by_regions).flatten().map(format_feature)
-    sample_out = sample_result.toDictionary().getInfo()
-    print(sample_out)
-
-    #PAGINATE HER MAYBE?
-    results_raw = image_flood.map(reduce_by_regions).flatten()
-
+    print(f"Extracting flood data for {n_image} images.")
     
+    for i in range(n_image):
+        this_image = ee.Image(image_list.get(i))
 
-    result = results_raw.map(format_feature)
+        reduced = reduce_by_regions(this_image)
+        formatted = reduced.map(format_feature)
 
-    # Pull features as a list of dicts (client-side) #THIS TIMES OUT, NEED TO PAGINATE OR EXPORT DIRECTLY
-    features_list = result.limit(10).getInfo()['features']
+        try:
+            features = formatted.getInfo()["features"]
+            properties = [f["properties"] for f in features]
+            df = pd.DataFrame(properties)
+            df["floodProp"] = pd.to_numeric(df["floodProp"], errors="coerce").fillna(0)
+            dfs.append(df)
+        except Exception as e:
+            print(f"Skipping image {i} due to error: {e}")
+            continue
 
-    # Extract properties dict from each feature
-    properties_list = [f['properties'] for f in features_list]
+    df_all = pd.concat(dfs, ignore_index=True)
+    df_all["date"] = pd.to_datetime(df_all["date"])
+    df_all["period"] = df_all["date"].dt.strftime("%Y%m")
 
-    #reformat for DHIS2
-    df = pd.DataFrame(properties_list)
+    flood_df = (
+        df_all.set_index(["orgUnit", "period"])
+        .groupby(["orgUnit", "period"])
+        .apply(lambda g: (g["floodProp"] * g["rice_area"]).sum() / g["rice_area"].sum())
+        .rename("pridec_climate_floodedRice")
+        .reset_index()
+    )
 
-    return df
-"""
-    #drop mean from column names
-    df.columns = [col.removesuffix('_mean') if col.endswith('_mean') else col for col in df.columns]
-
-    df_long = df.melt(
+    df_long = flood_df.melt(
         id_vars=['orgUnit', 'period'],
         var_name='dataElement',
         value_name='value'
     )
 
-    #values outisde of -1 to 1 become NA
-    df_long["value"] = df_long["value"].where(df_long["value"].between(-1, 1), np_nan)
+    df_long["value"] = df_long["value"].where(df_long["value"].between(0, 1), np_nan)
     #drop missing, round, and change period to string
     df_long = df_long.dropna(subset=['value'])
-    df_long['value'] = df_long['value'].round(4)
+    df_long['value'] = df_long['value'].round(6)
     df_long['period'] = df_long['period'].astype(str)
+    df_long["value"] = pd.to_numeric(df_long["value"], errors='coerce')
 
-    #turn into a json file
+        #turn into a json file
     df_dict = {
         "dataValues": df_long.to_dict(orient="records")
     }
 
-    data_json = json.dumps(df_dict, indent=2)
-
-    return data_json
-    """
+    return df_dict
