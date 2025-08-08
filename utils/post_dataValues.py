@@ -46,6 +46,6 @@ def post_dataValues(base_url, payload, user=None, pwd=None, token=None, dryRun=F
     # resp.json().get("httpStatus")
     # resp.json().get("status")
     # resp.json().get("message")
-    resp_text = response.json().get("response")
+    # resp_text = response.json().get("response") #for debugging
 
-    return resp_text
+    return response
