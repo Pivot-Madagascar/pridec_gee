@@ -9,7 +9,7 @@ import ee
 # from dateutil.relativedelta import relativedelta
 import os
 from dotenv import load_dotenv
-load_dotenv()
+load_dotenv(override=True)
 
 #in-house utility functions
 from utils import *
@@ -19,73 +19,105 @@ from utils.gee_s1_ard import *
 ee.Authenticate() #eventaully use token from environment
 ee.Initialize(project=os.environ.get("GEE_PROJECT"))
 
-# DHIS_TOKEN = os.environ.get("TOKEN_DHIS_PRIDEC_MICHELLE")
-# DHIS_URL = os.environ.get("DHIS_URL_PRIDEC")
-TEST_URL = "http://localhost:8080/" #for testing 
-TEST_TOKEN= "d2pat_XAbi5ElPPRiFZTpT3dxxa7ZYEAeFtxMX3440051476" #need to reinitilize on your own local server
-PARENT_OU = "VtP4BdCeXIo" #corresponds to ifanadiana
+DHIS_TOKEN = os.environ.get("DHIS2_TOKEN")
+DHIS_URL = os.environ.get("DHIS2_PRIDEC_URL")
+PARENT_OU = os.environ.get("PARENT_OU") #corresponds to ifanadiana
 OU_LEVEL = 6 #fokontany
+dryRun = os.getenv("DRYRUN", "true").lower() == "true" #default dryRun = True
+
+print(f"🌐 Updating PRIDEC Climate variables for {DHIS_URL}")
+print(f"🚧 Using configuration dryRun = {dryRun}")
 
 #Get orgUnits once to save time #######################
 # orgUnits can be accessd within each fetch call or here and then provided to the fetch call
 # I wasn't srue what was easiest for the flask app. see both options below
 
-org_units = get_dhis_geojson(PARENT_OU=PARENT_OU, OU_LEVEL=OU_LEVEL, dhis_token=TEST_TOKEN, dhis_url=TEST_URL)
+print(f"📡 Fetching geojson for parent {PARENT_OU} at level {OU_LEVEL}")
+
+org_units = get_dhis_geojson(PARENT_OU=PARENT_OU, OU_LEVEL=OU_LEVEL, dhis_token=DHIS_TOKEN, dhis_url=DHIS_URL)
 orgUnit = ee.FeatureCollection(org_units)
 
 # FEWSNET ############################################
 
+# print(f"Importing FEWSNET windspeed to {DHIS_URL}")
+
 #example fetching orgUnits within the fetch call
-fewsnet_json = fetch_fewsnet_windSpeed(dhis_token = TEST_TOKEN, 
-                                       dhis_url = TEST_URL,
+fewsnet_json = fetch_fewsnet_windSpeed(dhis_token = DHIS_TOKEN, 
+                                       dhis_url = DHIS_URL,
                                        PARENT_OU = PARENT_OU,
                                        OU_LEVEL = OU_LEVEL)
 
 #function to post to instance
-resp = post_dataValues(base_url = TEST_URL, payload = fewsnet_json, token = TEST_TOKEN, dryRun = True)
-print(resp)
+resp = post_dataValues(base_url = DHIS_URL, payload = fewsnet_json, token = DHIS_TOKEN, dryRun = dryRun)
+# print(resp)
+
+if resp.ok:
+    print(f"✅ SUCCESS: Imported FEWSNET windspeed")
+else:
+    print(f"❌ Failed to import FEWSNET windspeed")
+    print("Response:", resp.text)
 
 # MODIS Aerosol Optical Depth ########################
+
+# print(f"Importing MODIS AOD to {DHIS_URL}")
 
 #example using already available orgUnit
 aod_json = fetch_modis_aod(orgUnit = orgUnit)
 
-resp = post_dataValues(base_url = TEST_URL, payload = aod_json, token = TEST_TOKEN, dryRun = True)
-print(resp)
+resp = post_dataValues(base_url = DHIS_URL, payload = aod_json, token = DHIS_TOKEN, dryRun = dryRun)
+# print(resp)
+
+if resp.ok:
+    print(f"✅ SUCCESS: Imported MODIS AOD")
+else:
+    print(f"❌ Failed to import MODIS AOD")
+    print("Response:", resp.text)
 
 # MODIS Proportion bush fire ########################
 
+# print(f"Importing MODIS Fire to {DHIS_URL}")
+
 fire_json = fetch_modis_fire(orgUnit = orgUnit)
 
-resp = post_dataValues(base_url = TEST_URL, payload = fire_json, token = TEST_TOKEN, dryRun = True)
-print(resp)
+resp = post_dataValues(base_url = DHIS_URL, payload = fire_json, token = DHIS_TOKEN, dryRun = dryRun)
+# print(resp)
+
+if resp.ok:
+    print(f"✅ SUCCESS: Imported MODIS Fire")
+else:
+    print(f"❌ Failed to import MODIS Fire")
+    print("Response:", resp.text)
 
 # ERA5: temperature, precipitation, relative humidity ############
 
+# print(f"Importing ERA5 Climate to {DHIS_URL}")
+
 era5_json = fetch_era5_climate(orgUnit=orgUnit)
 
-#test one payload
-payload_test = {
-    "dataValues": [
-        {
-        "orgUnit": "NKnlmpvCHID",
-        "period": "202510",
-        "dataElement": "pridec_climate_temperatureMean",
-        "value": 17.7288
-    }
-    ]
-}
-
 #post to instance
-resp = post_dataValues(base_url = TEST_URL, payload = era5_json, token = TEST_TOKEN, dryRun = True)
-print(resp)
+resp = post_dataValues(base_url = DHIS_URL, payload = era5_json, token = DHIS_TOKEN, dryRun = dryRun)
+# print(resp)
+
+if resp.ok:
+    print(f"✅ SUCCESS: Imported ERA5 Climate")
+else:
+    print(f"❌ Failed to import ERA5 Climate")
+    print("Response:", resp.text)
 
 # Sen 2: EVI, MDNWI, GAO ######################################
 
+# print(f"Importing Sentinel-2 Indicators to {DHIS_URL}")
+
 sen2_json = fetch_sen2_climate(orgUnit = orgUnit)
 
-resp = post_dataValues(base_url = TEST_URL, payload = sen2_json, token = TEST_TOKEN, dryRun = True)
-print(resp)
+resp = post_dataValues(base_url = DHIS_URL, payload = sen2_json, token = DHIS_TOKEN, dryRun = dryRun)
+# print(resp)
+
+if resp.ok:
+    print(f"✅ SUCCESS: Imported Sentinel-2 Indicators")
+else:
+    print(f"❌ Failed to import Sentinel-2 Indicators")
+    print("Response:", resp.text)
 
 # Sen1 : Ricefield Flooding ###################################
 
