@@ -16,8 +16,11 @@ Spoke with Paul and we've decided we will leave this within docker and just add 
 
 - add call for launching analytics to the workflow. [done]
 
-Okay I will test this on a local instance, then run it on our production one so that the data is updated.
+Okay I will test this on a local instance, then run it on our production one so that the data is updated. Done.
 
+
+**TO DO:**
+- move this workflow over to Docker
 
 
 ## 2025-08-08
