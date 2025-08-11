@@ -3,7 +3,7 @@
 ## Common commands
 
 `pipreqs`: save requirements.txt file with list of dependencies
-`source .venv/bin/active`: activate venv
+`source .venv/bin/activate`: activate venv
 
 
 ## 2025-08-11

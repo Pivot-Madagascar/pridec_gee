@@ -41,7 +41,7 @@ print(f"📡 Fetching geojson for parent {PARENT_OU} at level {OU_LEVEL}")
 org_units = get_dhis_geojson(PARENT_OU=PARENT_OU, OU_LEVEL=OU_LEVEL, dhis_token=DHIS_TOKEN, dhis_url=DHIS_URL)
 orgUnit = ee.FeatureCollection(org_units)
 
-orgUnit_ids = orgUnit.aggregate_array('orgUnit').distinct().getInfo()
+# orgUnit_ids = orgUnit.aggregate_array('orgUnit').distinct().getInfo()
 
 # FEWSNET ############################################
 
