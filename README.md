@@ -55,12 +55,20 @@ GEE_PROJECT= YOUR_GEE_PROJECT_NAME
 GEE_SERVICE_ACCOUNT='YOUR_SERVICE_ACCOUNT@YOUR_CLOUD_PROJECT.iam.gserviceaccount.com'
 ```
 
-4. Run `fetch_all_climate_pridec.py` file
-
-This python file goes through the climate variables one by one to download them from GEE and then POST to a DHIS2 instance. By default, it uses `dryRun` = `True` and will not actually change data on the instance. This can be changed by passing an environment variable directly to the `python`:
+4. (Opt) Back up sql database on server
 
 ```
+sudo -u postgres pg_dump dhis2 | gzip > DATE_pridec_aws.sql.gz
+```
+
+4. Run `fetch_all_climate_pridec.py` file
+
+This python file goes through the climate variables one by one to download them from GEE and then POST to a DHIS2 instance. By default, it uses `dryRun` = `True` and will not actually change data on the instance. This can be changed by passing an environment variable directly to the `python` call:
+
+```
+source .venv/bin/activate
 export DRYRUN="False" && python fetch_all_climate_pridec.py
 ```
 
 It can also be added to your `.env` file, but we recommend explicitly specifying it to protect production instances.
+
