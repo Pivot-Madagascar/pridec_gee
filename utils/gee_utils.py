@@ -27,6 +27,8 @@ def month_agg_sp_mean(ic, fc, start_date, end_date, params=None):
     # Create list of dates that we would like to loop over
     first_day_date = ee.Date(start_date)
     last_day_date = ee.Date(end_date)
+
+
     n_months = last_day_date.difference(first_day_date, 'month')
     date_list = ee.List.sequence(0, n_months, 1)
 

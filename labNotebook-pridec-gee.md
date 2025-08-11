@@ -5,6 +5,21 @@
 `pipreqs`: save requirements.txt file with list of dependencies
 `source .venv/bin/active`: activate venv
 
+
+## 2025-08-11
+
+Spoke with Paul and we've decided we will leave this within docker and just add it as a seperate service like `import-gee`.  Beofre I move it to docker I need to do the following:
+
+- investigate why sen2 indicators are different and fix: I think this was becuase I was using top of atmosphere reflectnce instead of SR. It is stil different values than from befoe when I was using javascript, but the seasonality of this seems more realistic, so I will just delete the past 10 years of data and replace it with this new data. This also involved adding a looping functionality to side step the 5000 limit. This could eventually be added to the other fetch functions as well.
+
+- add delete functinality to remove data before adding new data (this may fix sen2 issue): created two seperate functions for this. `delete_dataValues` just deletes those in the json file that we are are to POST while `delete_historic_climate` gives more control over the time period and deletes a full range of data.
+
+- add call for launching analytics to the workflow. [done]
+
+Okay I will test this on a local instance, then run it on our production one so that the data is updated.
+
+
+
 ## 2025-08-08
 
 Finishing up the sen1 flooding workflow. I will just use this like normal to update PRIDE-C for now so it is done.

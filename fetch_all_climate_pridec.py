@@ -123,6 +123,7 @@ resp.json().get("message")
 
 #sen2_s2 begins 201804
 sen2_json = fetch_sen2_climate(orgUnit = orgUnit, months_prior=80)
+print(resp.text)
 
 resp = post_dataValues(base_url = DHIS_URL, payload = sen2_json, token = DHIS_TOKEN, dryRun = dryRun)
 # print(resp)
