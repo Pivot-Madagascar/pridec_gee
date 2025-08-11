@@ -41,6 +41,8 @@ print(f"📡 Fetching geojson for parent {PARENT_OU} at level {OU_LEVEL}")
 org_units = get_dhis_geojson(PARENT_OU=PARENT_OU, OU_LEVEL=OU_LEVEL, dhis_token=DHIS_TOKEN, dhis_url=DHIS_URL)
 orgUnit = ee.FeatureCollection(org_units)
 
+orgUnit_ids = orgUnit.aggregate_array('orgUnit').distinct().getInfo()
+
 # FEWSNET ############################################
 
 # print(f"Importing FEWSNET windspeed to {DHIS_URL}")
@@ -110,9 +112,17 @@ else:
 
 # Sen 2: EVI, MDNWI, GAO ######################################
 
-# print(f"Importing Sentinel-2 Indicators to {DHIS_URL}")
+# this is just to remove prior javascript based data one time
+resp = delete_historic_climate(base_url = DHIS_URL, dataElement = "pridec_climate_evi", delete_months = 105, 
+                               orgUnit_ids = orgUnit_ids, token = DHIS_TOKEN, dryRun = False)
+resp = delete_historic_climate(base_url = DHIS_URL, dataElement = "pridec_climate_mndwi", delete_months = 105, 
+                               orgUnit_ids = orgUnit_ids, token = DHIS_TOKEN, dryRun = False)
+resp = delete_historic_climate(base_url = DHIS_URL, dataElement = "pridec_climate_gao", delete_months = 105, 
+                               orgUnit_ids = orgUnit_ids, token = DHIS_TOKEN, dryRun = False)
+resp.json().get("message")
 
-sen2_json = fetch_sen2_climate(orgUnit = orgUnit)
+#sen2_s2 begins 201804
+sen2_json = fetch_sen2_climate(orgUnit = orgUnit, months_prior=80)
 
 resp = post_dataValues(base_url = DHIS_URL, payload = sen2_json, token = DHIS_TOKEN, dryRun = dryRun)
 # print(resp)
@@ -139,3 +149,11 @@ else:
     print(f"❌ Failed to import Sen-1 Ricefield Flooding")
     print("Response:", resp.text)
 
+# Run analytics to update dataValues ################################
+
+resp = launch_analytics(base_url = DHIS_URL, token = DHIS_TOKEN)
+
+print(resp.json().get("response")['relativeNotifierEndpoint'])
+analytics_endpoint = resp.json().get("response")['relativeNotifierEndpoint']
+
+print(f"Launched rebuilding of Analytics Tables. View status at {DHIS_URL}{analytics_endpoint}")
