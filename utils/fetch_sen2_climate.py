@@ -36,9 +36,9 @@ def fetch_sen2_climate(dhis_token=None, dhis_url=None, PARENT_OU=None, OU_LEVEL=
     .map(mask_s2_clouds).map(add_evi).map(add_gao). map(add_mndwi)
 
     fxparams = {
-    'reducer': ee.Reducer.mean(),  # Change the reducer if needed
-    'bands': ['EVI', 'MNDWI', 'GAO'],  # Example bands
-    'bandsRename': ['pridec_climate_evi', 'pridec_climate_mndwi', 'pridec_climate_gao']  # Rename bands
+    'reducer': ee.Reducer.mean(), 
+    'bands': ['EVI', 'MNDWI', 'GAO'],  
+    'bandsRename': ['pridec_climate_evi', 'pridec_climate_mndwi', 'pridec_climate_gao']  
     }
 
     result = month_agg_sp_mean(ic, orgUnit, date_range['start_date_gee'], date_range['end_date_gee'], fxparams)

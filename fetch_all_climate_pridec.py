@@ -125,7 +125,7 @@ else:
 
 # Sen1 : Ricefield Flooding ###################################
 
-print(f"🔎 Fetching Sen-1 flood data. This can take 10-15 minutes.")
+print(f"🔎 Fetching Sen-1 flood data. This can take 30-45 minutes.")
 
 flood_json = fetch_sen1_flood(rice_geojson_file="data/major-rice-orgUnit.geojson", 
                               test_run=dryRun)

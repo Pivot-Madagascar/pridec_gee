@@ -13,7 +13,11 @@ To add to a docker workflow, I will need to change it to use a GEE token instead
 
 this means it should mostly be ready for Docker, but I can work on that next week.
 
+There also seems to be an issue with the sen2 indicators being super different than those gotten through javascript. I need to investigate that function
+
 **TO DO:**
+- add call to start analytics to the workflow
+- troubleshoot sen2 indicators
 - functionality for deleting old climate data when needed: I think this can just be my own util script in `pridec-utils`
 - add tests
 - combine into an actual package? or just leave as is within docker
