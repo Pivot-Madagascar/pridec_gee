@@ -143,9 +143,11 @@ else:
 
 # Run analytics to update dataValues ################################
 
-resp = launch_analytics(base_url = DHIS_URL, token = DHIS_TOKEN)
+#this is now done manually via the docker workflow itself to avoid doing it multiple times
 
-print(resp.json().get("response")['relativeNotifierEndpoint'])
-analytics_endpoint = resp.json().get("response")['relativeNotifierEndpoint']
+# resp = launch_analytics(base_url = DHIS_URL, token = DHIS_TOKEN)
 
-print(f"Launched rebuilding of Analytics Tables. View status at {DHIS_URL}{analytics_endpoint}")
+# # print(resp.json().get("response")['relativeNotifierEndpoint'])
+# analytics_endpoint = resp.json().get("response")['relativeNotifierEndpoint']
+
+# print(f"Launched rebuilding of Analytics Tables. View status at {DHIS_URL}{analytics_endpoint}")
