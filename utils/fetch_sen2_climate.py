@@ -12,7 +12,7 @@ from utils.gee_utils import month_agg_sp_mean, mask_s2_clouds, add_evi, add_gao,
 from utils.get_date_range import get_date_range
 import os
 
-def fetch_sen2_climate(dhis_token=None, dhis_url=None, PARENT_OU=None, OU_LEVEL=None, orgUnit=None, months_prior=3):
+def fetch_sen2_climate(dhis_token=None, dhis_url=None, PARENT_OU=None, OU_LEVEL=None, orgUnit=None, historical_months=3):
     """
     Extract EVI, MNDWI, and NDWI GAO at monthly frequency from Sentinel-2 data
     Args:
@@ -21,7 +21,7 @@ def fetch_sen2_climate(dhis_token=None, dhis_url=None, PARENT_OU=None, OU_LEVEL=
         PARENT_OU (string) : id of orgUnit that contains the geojsons to extract for
         OU_LEVEL (string) : hierarchical orgUnit level for the geojson to extract for
         orgUnit (ee.FeatureCollection, optional) orgUnit polygons to use for extraction. If None, will get from DHIS2 instance
-        months_prior (int)      how many historical months to download. Deefault = 3
+        historical_months (int, optional): how many prior months of data to import. Default = 3
 
     Returns:
         json of climate data formatted for DHIS2 as dataValues
@@ -31,7 +31,7 @@ def fetch_sen2_climate(dhis_token=None, dhis_url=None, PARENT_OU=None, OU_LEVEL=
         org_units = get_dhis_geojson(PARENT_OU=PARENT_OU, OU_LEVEL=OU_LEVEL, dhis_token=dhis_token, dhis_url=dhis_url)
         orgUnit = ee.FeatureCollection(org_units)
 
-    date_range =  get_date_range(end_months_ago = 1, end_on_last_day=False, start_months_ago = months_prior)
+    date_range =  get_date_range(end_months_ago = 1, end_on_last_day=False, start_months_ago = historical_months)
 
     date_seq = pd.date_range(start = pd.to_datetime(date_range['start_date_gee']), 
                              end = pd.to_datetime(date_range['end_date_gee']), freq = 'MS')

@@ -12,7 +12,7 @@ from utils.gee_utils import zonal_stats, month_agg_sp_mean
 from utils.get_date_range import get_date_range
 import os
 
-def fetch_fewsnet_windSpeed(dhis_token=None, dhis_url=None, PARENT_OU=None, OU_LEVEL=None, orgUnit=None):
+def fetch_fewsnet_windSpeed(dhis_token=None, dhis_url=None, PARENT_OU=None, OU_LEVEL=None, orgUnit=None, historical_months = 3):
     """
     Fetch FEWSNET Windspeed data from GEE for specified orgUnits
 
@@ -22,6 +22,7 @@ def fetch_fewsnet_windSpeed(dhis_token=None, dhis_url=None, PARENT_OU=None, OU_L
         PARENT_OU (string, optional) : id of orgUnit that contains the geojsons to extract for
         OU_LEVEL (string,  optional) : hierarchical orgUnit level for the geojson to extract for
         orgUnit (ee.FeatureCollection, optional) orgUnit polygons to use for extractoin. If None, will get from DHIS2 instance
+        historical_months (numeric, optional): how many prior months of data to import. Default = 3
 
     Returns:
         json of windspeed from fewsnet data
@@ -31,7 +32,7 @@ def fetch_fewsnet_windSpeed(dhis_token=None, dhis_url=None, PARENT_OU=None, OU_L
         org_units = get_dhis_geojson(PARENT_OU=PARENT_OU, OU_LEVEL=OU_LEVEL, dhis_token=dhis_token, dhis_url=dhis_url)
         orgUnit = ee.FeatureCollection(org_units)
 
-    date_range =  get_date_range(end_months_ago = 2,
+    date_range =  get_date_range(end_months_ago = 2, start_months_ago= historical_months,
                              end_on_last_day=False)
 
     ic = ee.ImageCollection("NASA/FLDAS/NOAH01/C/GL/M/V001").filterBounds(orgUnit).filterDate("2010-01-01", datetime.today())

@@ -7,13 +7,14 @@ from utils.get_date_range import get_date_range
 from utils.gee_s1_ard.wrapper import s1_preproc
 from utils.gee_s1_ard.helper import add_ratio_lin, lin_to_db2
 
-def fetch_sen1_flood(rice_geojson_file, test_run=True):
+def fetch_sen1_flood(rice_geojson_file, test_run=True, historical_months=3):
     """
     Extract Ricefield flooding from Sentinel-1 data. This is specific to Ifanadiana district for now
 
     Args:
         rice_geojson_file (string) : path to geojson file containing rice fields where you want to extract flooding
         test_run (bool) : whether to perofrm a test on only 10 images. Useful because this treatment can take a long time
+        historical_months (int, optional): how many prior months of data to import. Default = 3
 
     Returns:
         json of flooding data formatted for DHIS2 as dataValues
@@ -28,7 +29,7 @@ def fetch_sen1_flood(rice_geojson_file, test_run=True):
     )
 
     bbox = ee.Geometry.Rectangle([46,-23,49.5,-19], 'EPSG:4326')
-    date_range =  get_date_range(end_months_ago = 1, end_on_last_day=True, start_months_ago = 3)
+    date_range =  get_date_range(end_months_ago = 1, end_on_last_day=True, start_months_ago = historical_months)
 
     fxparams = {
         # 1. Data selection
