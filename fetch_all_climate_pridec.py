@@ -5,7 +5,7 @@ import ee
 # import pandas as pd
 # import json
 # import requests
-# from datetime import datetime
+from datetime import datetime
 # from dateutil.relativedelta import relativedelta
 import os
 from dotenv import load_dotenv
@@ -29,14 +29,14 @@ PARENT_OU = os.environ.get("PARENT_OU") #corresponds to ifanadiana
 OU_LEVEL = 6 #fokontany
 dryRun = os.getenv("DRYRUN", "true").lower() == "true" #default dryRun = True
 
-print(f"🌐 Updating PRIDEC Climate variables for {DHIS_URL}")
-print(f"🚧 Using configuration dryRun = {dryRun}")
+print(f"Updating PRIDEC Climate variables for {DHIS_URL}")
+print(f"Using configuration dryRun = {dryRun}")
 
 #Get orgUnits once to save time #######################
 # orgUnits can be accessd within each fetch call or here and then provided to the fetch call
 # I wasn't srue what was easiest for the flask app. see both options below
 
-print(f"📡 Fetching geojson for parent {PARENT_OU} at level {OU_LEVEL}")
+print(f"Fetching geojson for parent {PARENT_OU} at level {OU_LEVEL}")
 
 org_units = get_dhis_geojson(PARENT_OU=PARENT_OU, OU_LEVEL=OU_LEVEL, dhis_token=DHIS_TOKEN, dhis_url=DHIS_URL)
 orgUnit = ee.FeatureCollection(org_units)
@@ -58,7 +58,7 @@ resp = post_dataValues(base_url = DHIS_URL, payload = fewsnet_json, token = DHIS
 # print(resp)
 
 if resp.ok:
-    print(f"✅ SUCCESS: Imported FEWSNET windspeed")
+    print(f"SUCCESS: Imported FEWSNET windspeed")
 else:
     print(f"❌ Failed to import FEWSNET windspeed")
     print("Response:", resp.text)
@@ -74,7 +74,7 @@ resp = post_dataValues(base_url = DHIS_URL, payload = aod_json, token = DHIS_TOK
 # print(resp)
 
 if resp.ok:
-    print(f"✅ SUCCESS: Imported MODIS AOD")
+    print(f"SUCCESS: Imported MODIS AOD")
 else:
     print(f"❌ Failed to import MODIS AOD")
     print("Response:", resp.text)
@@ -89,7 +89,7 @@ resp = post_dataValues(base_url = DHIS_URL, payload = fire_json, token = DHIS_TO
 # print(resp)
 
 if resp.ok:
-    print(f"✅ SUCCESS: Imported MODIS Fire")
+    print(f"SUCCESS: Imported MODIS Fire")
 else:
     print(f"❌ Failed to import MODIS Fire")
     print("Response:", resp.text)
@@ -105,7 +105,7 @@ resp = post_dataValues(base_url = DHIS_URL, payload = era5_json, token = DHIS_TO
 # print(resp)
 
 if resp.ok:
-    print(f"✅ SUCCESS: Imported ERA5 Climate")
+    print(f"SUCCESS: Imported ERA5 Climate")
 else:
     print(f"❌ Failed to import ERA5 Climate")
     print("Response:", resp.text)
@@ -120,14 +120,16 @@ resp = post_dataValues(base_url = DHIS_URL, payload = sen2_json, token = DHIS_TO
 # print(resp)
 
 if resp.ok:
-    print(f"✅ SUCCESS: Imported Sentinel-2 Indicators")
+    print(f"SUCCESS: Imported Sentinel-2 Indicators")
 else:
     print(f"❌ Failed to import Sentinel-2 Indicators")
     print("Response:", resp.text)
 
 # Sen1 : Ricefield Flooding ###################################
 
-print(f"🔎 Fetching Sen-1 flood data. This can take 30-45 minutes.")
+print(f"Fetching Sen-1 flood data. This can take 30-45 minutes.")
+current_time = datetime.datetime.utcnow()
+print(f"Beginning Sen-1 flood processing at {current_time}")
 
 flood_json = fetch_sen1_flood(rice_geojson_file="data/major-rice-orgUnit.geojson", 
                               test_run=dryRun)
@@ -136,7 +138,7 @@ resp = post_dataValues(base_url = DHIS_URL, payload = flood_json, token = DHIS_T
 # print(resp.json().get("response"))
 
 if resp.ok:
-    print(f"✅ SUCCESS: Imported Sen-1 Ricefield Flooding")
+    print(f"SUCCESS: Imported Sen-1 Ricefield Flooding")
 else:
     print(f"❌ Failed to import Sen-1 Ricefield Flooding")
     print("Response:", resp.text)
