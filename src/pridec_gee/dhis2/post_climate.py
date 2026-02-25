@@ -1,15 +1,14 @@
 import requests
 from requests.auth import HTTPBasicAuth
-import json
-import os
 
-def launch_analytics(base_url, user=None, pwd=None, token=None, dryRun=False):
+def post_climate(base_url, payload, user=None, pwd=None, token=None, dryRun=False):
     """
-    Launches Analytics Tables on a dhis2 instance
+    Posts dataElement values to a dhis2 instance. Meant to be used for climate data, but can be used for any dataElement.
 
     Args:
         base_url (str)           url of dhis2 isntance
-        user (str, optional)     ousername for dhis2 instance
+        payload (dict)           JSON payload of climate data to send in POST. Output of fetch_* functions
+        user (str, optional)     username for dhis2 instance
         pwd (str, optional)      password for dhis2 instance
         token (str, optional)    personal access token for dhis2 instance.
                                  Can be provided instead of user and pwd.
@@ -22,7 +21,15 @@ def launch_analytics(base_url, user=None, pwd=None, token=None, dryRun=False):
     if not token and not (user and pwd):
         raise ValueError("Authentication required: provide either a token or both user and pwd")
 
-    endpoint = "api/33/resourceTables/analytics"
+    endpoint = (
+        "api/dataValueSets"
+        f"?dryRun={'true' if dryRun else 'false'}"
+        "&dataElementIdScheme=code"
+        "&orgUnitIdScheme=uid"
+        "&categoryOptionComboIdScheme=code"
+        "&idScheme=code"
+        "&importStrategy=CREATE_AND_UPDATE"
+    )
 
 
     url = f"{base_url.rstrip('/')}/{endpoint}"
@@ -32,7 +39,7 @@ def launch_analytics(base_url, user=None, pwd=None, token=None, dryRun=False):
     auth = None if token else HTTPBasicAuth(user, pwd)
     
     #send request
-    response = requests.post(url, headers=headers, auth=auth)
+    response = requests.post(url, headers=headers, auth=auth, json=payload)
 
     # resp.json().get("httpStatus")
     # resp.json().get("status")

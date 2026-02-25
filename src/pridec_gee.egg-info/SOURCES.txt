@@ -5,11 +5,10 @@ src/pridec_gee.egg-info/PKG-INFO
 src/pridec_gee.egg-info/SOURCES.txt
 src/pridec_gee.egg-info/dependency_links.txt
 src/pridec_gee.egg-info/top_level.txt
-src/pridec_gee/dhis2/delete_dataValues.py
 src/pridec_gee/dhis2/delete_historic_climate.py
 src/pridec_gee/dhis2/get_dhis_geojson.py
-src/pridec_gee/dhis2/launch_analytics.py
-src/pridec_gee/dhis2/post_dataValues.py
+src/pridec_gee/dhis2/get_pridec_elements.py
+src/pridec_gee/dhis2/post_climate.py
 src/pridec_gee/gee/__init__.py
 src/pridec_gee/gee/calc_date_range.py
 src/pridec_gee/gee/fetch_era5_climate.py

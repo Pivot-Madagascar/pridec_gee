@@ -1,4 +1,5 @@
 import requests
+from requests.auth import HTTPBasicAuth
 
 def get_dhis_geojson(PARENT_OU, OU_LEVEL, dhis_url, dhis_user=None, dhis_pwd=None, dhis_token=None):
     """
@@ -6,7 +7,7 @@ def get_dhis_geojson(PARENT_OU, OU_LEVEL, dhis_url, dhis_user=None, dhis_pwd=Non
     
     Args:
         PARENT_OU (string): id of parent orgUnit
-        OU_LEVEL (int): hierarchy level of OrgUnit (6 = fokontany)
+        OU_LEVEL (int): hierarchy level of OrgUnit
         dhis_url (string): base url of DHIS2 instance
         dhis_user (str, optional) :   username for dhis2 instance
         dhis_pwd (str, optional)  :   password for dhis2 instance

@@ -1,0 +1,22 @@
+[build-system]
+build-backend = "uv_build"
+
+[project]
+name = 'prideg_gee'
+version = '0.1.0'
+description = "Import environmental data from Google Earth Engine into DHIS2 instances"
+readme = "README.md"
+dependencies = [
+    "ee==0.2",
+    "earthengine-api==1.5.23",
+    "numpy==2.3.1",
+    "pandas==2.3.1",
+    "python_dateutil==2.9.0.post0",
+    "Requests==2.32.4",
+    "dotenv",
+    "setuptools"
+]
+authors = [
+    {email = "pridec@pivotworks.org"},
+    {name = "PRIDE-C Project}
+]
