@@ -1,5 +1,7 @@
 import json
 import ee
+import os
+
 
 # from pridec_gee import fetch_modis_fire
 
@@ -10,6 +12,9 @@ ee.Authenticate()
 ee.Initialize(project='ee-mevans-pridec')
 
 def test_modis_fire_downloads():
+
+    credentials = ee.ServiceAccountCredentials(os.environ.get("GEE_SERVICE_ACCOUNT"), ".gee-private-key.json")
+    ee.Initialize(credentials)
 
     #replace with test polygon
     geojson_path = "scratch/csb_orgUnit_dhis.geojson"

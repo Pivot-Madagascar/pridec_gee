@@ -1,9 +1,7 @@
 import json
 import ee
 
-# from pridec_gee import fetch_modis_aod
-
-from src.pridec_gee.gee.fetch_modis_aod import fetch_modis_aod
+from pridec_gee import fetch_modis_aod
 
 #initialize (should be done in conftest.py)
 ee.Authenticate()
