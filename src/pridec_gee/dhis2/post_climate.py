@@ -41,6 +41,14 @@ def post_climate(base_url, payload, user=None, pwd=None, token=None, dryRun=Fals
     #send request
     response = requests.post(url, headers=headers, auth=auth, json=payload)
 
+    # def clean_json_resp(resp):
+    #     try:
+    #         resp.json()
+    #     except:
+    #         "Empty API Response"
+    
+    # resp_text = clean_json_resp(response)
+
     # resp.json().get("httpStatus")
     # resp.json().get("status")
     # resp.json().get("message")

@@ -5,6 +5,22 @@
 `pipreqs`: save requirements.txt file with list of dependencies
 `pip install -r requirements`: install requirements
 `source .venv/bin/activate`: activate venv
+`pip install -e .`: install editable for during development
+
+## 2026-03-02
+
+The wrapper function seems to work, but the error messages leave a lot to be desired. I will need to work on this and the testing in the future.
+
+## 2026-02-27
+
+Writing wrapper function so it should then be able to be integrated into the docker image. Nearly done
+
+
+**TO DO**
+- configure full testing infrastructure with env variables and offline testing [still working on getting something to work with tokens]
+- document and build with `uv`
+- wrap wrapper function to run multiple climate variables at once. Then each can be turned on/off in one call.
+
 
 ## 2026-02-25
 
@@ -12,11 +28,13 @@ Started restructuring using a `src` directory structure. Also rewrote the fetch 
 
 All of the gee functions have been updated and tested.
 
-I need to decide whether I want to leave the DHIS2 functions here or not? I think the ability to delete and manage the climate data could be useful. So like, POST, DELETE, GET names of dataElements with climate? Also getting the geojson. This way everything could just be done in this package if needed. I will get rid of the analytics launching though. And still make a seperate package for Pivot's own dhis2 tools.
+I need to decide whether I want to leave the DHIS2 functions here or not? I think the ability to delete and manage the climate data could be useful. So like, POST, DELETE, GET names of dataElements with climate? Also getting the geojson. This way everything could just be done in this package if needed. I will get rid of the analytics launching though. And still make a seperate package for Pivot's own dhis2 tools. [done]
 
 **TO DO**
-- configure full testing infrastructure with env variables and offline testing
-- rewrite/structure dhis2 module
+- configure full testing infrastructure with env variables and offline testing [still working on getting something to work with tokens]
+- rewrite/structure dhis2 module [done]
+- document and build with `uv`
+- wrap wrapper function to run multiple climate variables at once. Then each can be turned on/off in one call.
 
 ## 2026-02-23
 
