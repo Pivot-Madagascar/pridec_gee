@@ -20,8 +20,6 @@ def test_era5_climate_downloads(test_polygons, gee_service_account, gee_key):
     orgUnit = ee.FeatureCollection(test_polygons)
 
     date_range = {
-        "start_label": "202501",
-        "end_label": "202501",
         "start_date_gee":"2025-01-01",
         "end_date_gee": "2025-01-30"
     }

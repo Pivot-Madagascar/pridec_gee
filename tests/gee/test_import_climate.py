@@ -38,8 +38,6 @@ def test_import_pridec_climate(test_ricefields, test_polygons, gee_service_accou
     orgUnit = ee.FeatureCollection(test_polygons)
 
     date_range = {
-        "start_label": "202501",
-        "end_label": "202502",
         "start_date_gee":"2025-01-01",
         "end_date_gee": "2025-02-28"
     }

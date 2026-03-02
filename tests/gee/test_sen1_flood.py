@@ -19,8 +19,6 @@ def test_sen1_flood_downloads(test_ricefields, gee_service_account, gee_key):
     rice_fields = ee.FeatureCollection(test_ricefields)
 
     date_range = {
-        "start_label": "202501",
-        "end_label": "202502",
         "start_date_gee":"2025-01-01",
         "end_date_gee": "2025-02-28"
     }

@@ -24,8 +24,6 @@ def test_modis_fire_downloads():
     orgUnit = ee.FeatureCollection(geojson_data)
 
     date_range = {
-        "start_label": "202501",
-        "end_label": "202504",
         "start_date_gee":"2025-01-01",
         "end_date_gee": "2025-04-30"
     }

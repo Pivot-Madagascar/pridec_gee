@@ -19,8 +19,6 @@ def test_sen2_inds_downloads():
     orgUnit = ee.FeatureCollection(geojson_data)
 
     date_range = {
-        "start_label": "202401",
-        "end_label": "202402",
         "start_date_gee":"2024-01-01",
         "end_date_gee": "2024-02-28"
     }
