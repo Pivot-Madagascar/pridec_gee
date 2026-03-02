@@ -11,6 +11,22 @@
 
 The wrapper function seems to work, but the error messages leave a lot to be desired. I will need to work on this and the testing in the future.
 
+Doign some ad-hoc testing in `scratch/test_package.py`
+
+Saved pivot-specific rice fields in a data place.
+
+FEWSNET has a super slow latency. For example, today, it only has the data available for January (not Feb), and won't have February until the end of march. So I will just drop from analyses for now. Done, except actulaly it is doing it based on the label and not the end date. So I need to fix that. [done]
+
+REalized I don't even use the start and end lable bits of the date range so this could just be two string dates without a name, which would be must easier. I just ened to update all the functions to deal with that. But that can be done later. [done]
+
+Tested the climate_docker_service on a local isntance and it worked!
+
+**TO DO:**
+- configure full testing infrastructure with env variables and offline testing [still working on getting something to work with tokens]
+- document and build with `uv`
+- update docker with this package and scripts for certain calls `climate_docker_service.py` has this for now.
+
+
 ## 2026-02-27
 
 Writing wrapper function so it should then be able to be integrated into the docker image. Nearly done
