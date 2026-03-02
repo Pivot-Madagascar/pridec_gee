@@ -11,11 +11,11 @@ def fetch_sen1_flood(rice_features, date_range, dryRun=True):
     Extract Ricefield flooding from Sentinel-1 data. This function is specific to ricefield data from Ifanadiana district (Pivot).
 
     Args:
-        rice_features (FeatureCollection) : FeatureCollection of rice fields where you want to extract flooding. Should contain values `id` unique
-            to each rice field and `orgUnit` corresponding to the DHIS2 orgUnit hte values will be aggregated to.
-        date_range (dict): range of dates to download data of. 
-            Format is a string (start_label [%Y%m], end_label[%Y%m], start_date_gee[%Y-%m-%d], end_date_gee[%Y-%m-%d])
-        dryRun (bool) : whether to perform a test on only 5 images. Useful because this treatment can take a long time
+        rice_features (FeatureCollection) : FeatureCollection of rice fields where you want to extract flooding. 
+                                            Should contain values `id` unique to each rice field and `orgUnit` corresponding to the DHIS2 orgUnit hte values will be aggregated to.
+        date_range (list):                   range of dates to download data of. 
+                                                Format is a string (start_date_gee[%Y-%m-%d], end_date_gee[%Y-%m-%d]) 
+        dryRun (bool) :                     whether to perform a test on only 5 images. Useful because this treatment can take a long time
 
     Returns:
         JSON file with columns orgUnit, period, value, dataElement formatted to submit to DHIS2

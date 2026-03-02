@@ -6,9 +6,9 @@ def fetch_modis_fire(orgUnit, date_range):
     Extracts proportion of land with active fire during a month from MODIS satellite for orgUnits from DHIS2
 
     Args:
-        orgUnit (ee.FeatureCollection): orgUnit polygons to use for extraction. If None, will get from DHIS2 instance
-        date_range (dict): range of dates to download data of. 
-                    Format is a string (start_label [%Y%m], end_label[%Y%m], start_date_gee[%Y-%m-%d], end_date_gee[%Y-%m-%d])
+        orgUnit (ee.FeatureCollection):     orgUnit polygons to use for extraction. If None, will get from DHIS2 instance
+        date_range (list):                   range of dates to download data 
+                                                Format is a string (start_date_gee[%Y-%m-%d], end_date_gee[%Y-%m-%d]) 
 
     Returns:
         JSON file with columns orgUnit, period, value, dataElement formatted to submit to DHIS2

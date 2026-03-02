@@ -1,13 +1,13 @@
 import requests
 from requests.auth import HTTPBasicAuth
 
-def get_dhis_geojson(PARENT_OU, OU_LEVEL, dhis_url, dhis_user=None, dhis_pwd=None, dhis_token=None):
+def get_dhis_geojson(parent_ou, ou_level, dhis_url, dhis_user=None, dhis_pwd=None, dhis_token=None):
     """
     GETs geojson of orgUnits from DHIS2 instance
     
     Args:
-        PARENT_OU (string): id of parent orgUnit
-        OU_LEVEL (int): hierarchy level of OrgUnit
+        parent_ou (string): id of parent orgUnit
+        ou_level (int): hierarchy level of OrgUnit
         dhis_url (string): base url of DHIS2 instance
         dhis_user (str, optional) :   username for dhis2 instance
         dhis_pwd (str, optional)  :   password for dhis2 instance
@@ -24,7 +24,7 @@ def get_dhis_geojson(PARENT_OU, OU_LEVEL, dhis_url, dhis_user=None, dhis_pwd=Non
     # Authentication setup
     headers = {'Authorization': f'ApiToken {dhis_token}'} if dhis_token else {}
     auth = None if dhis_token else HTTPBasicAuth(dhis_user, dhis_pwd)
-    geo_url = f"{dhis_url}api/organisationUnits.geojson?parent={PARENT_OU}&level={OU_LEVEL}"
+    geo_url = f"{dhis_url}api/organisationUnits.geojson?parent={parent_ou}&level={ou_level}"
 
     response = requests.get(geo_url, headers = headers, auth = auth)
     response.raise_for_status()

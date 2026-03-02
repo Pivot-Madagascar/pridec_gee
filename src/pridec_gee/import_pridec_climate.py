@@ -26,8 +26,8 @@ def import_pridec_climate(dhis_url, date_range, orgUnit=None, parent_ou=None, ou
         orgUnit (FeatureCollection, opt)    FeatureCollection of orgUnits to download
         parent_ou (str, Optional)           uid of parent orgUnit for geojson download
         ou_level (int, Optional)            hierarchical level of orgUnit to extract for
-        date_range (list)                   date_range (dict): range of dates to download data of. 
-                                                Format is a string (start_label [%Y%m], end_label[%Y%m], start_date_gee[%Y-%m-%d], end_date_gee[%Y-%m-%d])  
+        date_range (list)                   range of dates to download data 
+                                                Format is a string (start_date_gee[%Y-%m-%d], end_date_gee[%Y-%m-%d])  
         variables (list)                    list containing all or a subset of the following:
                                                 ["fewsnet","era5", "modis_aod", "modis_fire", "sen2", "sen1_flood"]
         rice_features                       ee.Feature Collection of rice fields if importing `sen1_flood` data

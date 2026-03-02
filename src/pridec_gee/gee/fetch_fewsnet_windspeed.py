@@ -3,21 +3,25 @@ import pandas as pd
 
 
 from .utils import month_agg_sp_mean
+from .calc_date_range import enforce_two_month_lag
 
 def fetch_fewsnet_windspeed(orgUnit, date_range):
     """
     Fetch FEWSNET Windspeed data from GEE for specified orgUnits at monthly frequency
 
         Args:
-        orgUnit (ee.FeatureCollection): orgUnit polygons to use for extraction. If None, will get from DHIS2 instance
-        date_range (dict): range of dates to download data of. 
-                    Format is a string (start_label [%Y%m], end_label[%Y%m], start_date_gee[%Y-%m-%d], end_date_gee[%Y-%m-%d])
+        orgUnit (ee.FeatureCollection):     orgUnit polygons to use for extraction. If None, will get from DHIS2 instance
+        date_range (list)                   range of dates to download data of. 
+                                                Format is a string (start_date_gee[%Y-%m-%d], end_date_gee[%Y-%m-%d]) 
 
     Returns:
         JSON file with columns orgUnit, period, value, dataElement formatted to submit to DHIS2
     """
 
     ic = ee.ImageCollection("NASA/FLDAS/NOAH01/C/GL/M/V001").filterBounds(orgUnit)
+
+    #FEWSNET data has a two month latency
+    date_range = enforce_two_month_lag(date_range)
 
     fxparams = {
     'reducer': ee.Reducer.mean(),  
