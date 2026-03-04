@@ -16,8 +16,7 @@ from .dhis2.post_climate import post_climate
 def import_pridec_climate(dhis_url, date_range, orgUnit=None, parent_ou=None, ou_level=None, 
                        variables=["fewsnet","era5", "modis_aod", "modis_fire", "sen2", "sen1_flood"], 
                        rice_features=None,
-                       dhis_user=None, dhis_pwd=None, dhis_token=None, dryRun=True,
-                       verbose=True):
+                       dhis_user=None, dhis_pwd=None, dhis_token=None, dryRun=True):
     """
     Import PRIDE-C variables into a DHIS2 instance
 
@@ -37,7 +36,6 @@ def import_pridec_climate(dhis_url, date_range, orgUnit=None, parent_ou=None, ou
                                             Can be provided instead of user and pwd.
         dryRun (boolean)                    True: test a dry run of the POST
                                             False: actually post the data
-        verbose (boolean)                   Return API responses from DHIS2 POST?
 
     Returns:
         requests.Response: Response object from POST requests
@@ -64,8 +62,7 @@ def import_pridec_climate(dhis_url, date_range, orgUnit=None, parent_ou=None, ou
                             dryRun = dryRun)
         if resp.ok:
             logger.info("Imported FEWSNET windspeed")
-            if verbose:
-                logger.info("Response: %s", resp.text)
+            logger.debug("Response: %s", resp.text)
         else:
             logger.error("Failed to import FEWSNET windspeed")
             logger.error("Response: %s", resp.text)
@@ -78,8 +75,7 @@ def import_pridec_climate(dhis_url, date_range, orgUnit=None, parent_ou=None, ou
                             dryRun = dryRun)
         if resp.ok:
             logger.info("Imported ERA5 climate variables")
-            if verbose:
-                logger.info("Response: %s", resp.text)
+            logger.debug("Response: %s", resp.text)
         else:
             logger.error("Failed to import ERA5 climate variables")
             logger.error("Response: %s", resp.text)
@@ -92,8 +88,7 @@ def import_pridec_climate(dhis_url, date_range, orgUnit=None, parent_ou=None, ou
                             dryRun = dryRun)
         if resp.ok:
             logger.info("Imported MODIS Aerosol Optical Depth")
-            if verbose:
-                logger.info("Response: %s", resp.text)
+            logger.debug("Response: %s", resp.text)
         else:
             logger.error("Failed to import MODIS Aerosol Optical Depth")
             logger.error("Response: %s", resp.text)
@@ -107,8 +102,7 @@ def import_pridec_climate(dhis_url, date_range, orgUnit=None, parent_ou=None, ou
                             dryRun = dryRun)
         if resp.ok:
             logger.info("Imported MODIS Fire Detection")
-            if verbose:
-                logger.info("Response: %s", resp.text)
+            logger.debug("Response: %s", resp.text)
         else:
             logger.error("Failed to import MODIS Fire Detection")
             logger.error("Response: %s", resp.text)
@@ -123,8 +117,7 @@ def import_pridec_climate(dhis_url, date_range, orgUnit=None, parent_ou=None, ou
                             dryRun = dryRun)
         if resp.ok:
             logger.info("Imported Sen2 Vegetation Indicators")
-            if verbose:
-                logger.info("Response: %s", resp.text)
+            logger.debug("Response: %s", resp.text)
         else:
             logger.error("Failed to import Sen2 Vegetation Indicators")
             logger.error("Response: %s", resp.text)
@@ -134,7 +127,7 @@ def import_pridec_climate(dhis_url, date_range, orgUnit=None, parent_ou=None, ou
             logger.error("Argument rice_features must be provided to import Sen-1 Ricefield flooding dynamics")
             return
         
-        logger.info("Importing Sen-1 flood data. This can take 30-45 minutes if not in dryRun mode.")
+        logger.info("Importing Sen-1 flood data. This can take 30-45 minutes if not in dryRun mode. Currently running with dryRun = %s", dryRun)
 
         flood_json = fetch_sen1_flood(rice_features, date_range, dryRun)
         resp = post_climate(base_url = dhis_url, payload = flood_json, 
@@ -142,8 +135,7 @@ def import_pridec_climate(dhis_url, date_range, orgUnit=None, parent_ou=None, ou
                             dryRun = dryRun)
         if resp.ok:
             logger.info("Sen1 Flooding Dynamics imported")
-            if verbose:
-                logger.info("Response: %s", resp.text)
+            logger.debug("Response: %s", resp.text)
         else:
             logger.error("Failed to import Sen1 Flooding Dynamics")
             logger.error("Response: %s", resp.text)
