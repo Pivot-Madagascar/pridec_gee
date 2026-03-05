@@ -24,7 +24,7 @@ def get_dhis_geojson(parent_ou, ou_level, dhis_url, dhis_user=None, dhis_pwd=Non
     # Authentication setup
     headers = {'Authorization': f'ApiToken {dhis_token}'} if dhis_token else {}
     auth = None if dhis_token else HTTPBasicAuth(dhis_user, dhis_pwd)
-    geo_url = f"{dhis_url}api/organisationUnits.geojson?parent={parent_ou}&level={ou_level}"
+    geo_url = f"{dhis_url}/api/organisationUnits.geojson?parent={parent_ou}&level={ou_level}"
 
     response = requests.get(geo_url, headers = headers, auth = auth)
     response.raise_for_status()
