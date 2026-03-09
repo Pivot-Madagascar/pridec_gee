@@ -24,24 +24,34 @@ def get_dhis_geojson(parent_ou, ou_level, dhis_url, dhis_user=None, dhis_pwd=Non
     # Authentication setup
     headers = {'Authorization': f'ApiToken {dhis_token}'} if dhis_token else {}
     auth = None if dhis_token else HTTPBasicAuth(dhis_user, dhis_pwd)
-    geo_url = f"{dhis_url}/api/organisationUnits.geojson?parent={parent_ou}&level={ou_level}"
+    geo_url = f"{dhis_url.rstrip('/')}/api/organisationUnits.geojson?parent={parent_ou}&level={ou_level}&fields=id,geometry"
 
     response = requests.get(geo_url, headers = headers, auth = auth)
     response.raise_for_status()
     geojson = response.json()
 
+    features = []
+
+    for feature in geojson.get("features", []):
+        geom = feature.get("geometry")
+
+        if not geom:
+            continue
+
+        if geom.get("type") not in {"Polygon", "MultiPolygon"}:
+            continue
+
+        features.append({
+            "type": "Feature",
+            "geometry": geom,
+            "properties": {
+                "orgUnit": feature.get("id")
+            }
+        })
+
     org_units = {
         "type": "FeatureCollection",
-        "features": [
-            {
-                "type": "Feature",
-                "geometry": feature["geometry"],
-                "properties": {
-                    "orgUnit": feature["id"]
-                }
-            }
-            for feature in geojson["features"]
-            if "geometry" in feature and feature["geometry"]
-        ]
-        }
+        "features": features
+    }
+
     return org_units

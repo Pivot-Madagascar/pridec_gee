@@ -9,10 +9,9 @@ def test_get_dhis_geojson():
     user = "admin"
     pwd = "district"
 
-    get_dhis_geojson(PARENT_OU= "dfd",
-                     OU_LEVEL="dfsdf",
+    get_dhis_geojson(parent_ou= "Vth0fbpFcsO",
+                     ou_level="3",
                      dhis_url = dhis_url,
                      dhis_user = user,
                      dhis_pwd = pwd)
     
-    #fill in with proper ou info and then check it reutnrs the right thing
