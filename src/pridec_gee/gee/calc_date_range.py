@@ -1,19 +1,27 @@
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
-def calc_date_range(start_months_ago = 3, end_on_last_day=True, reference_date=None):
-    """
-    Returns date range labels for a period starting from the first day of `start_months_ago` months ago
-    to either the first or last day of the month prior to reference date.
+def calc_date_range(
+    start_months_ago: int = 3,
+    end_on_last_day: bool = True,
+    reference_date: datetime.date | None = None,
+) -> dict[str, str]:
+    """Calculate a date range label for a period in months relative to a reference date.
+
+    Returns start and end dates for a period starting from the first day of
+    `start_months_ago` months ago to either the first or last day of the month
+    prior to the reference date (or today if no reference date is given).
 
     Args:
-        start_months_ago (int): How many months ago to start data collection. Default is 3.
-        end_on_last_day (bool): If True, sets the end date to the last day of end_months_ago month.
-                                If False, uses the first day of end_months_ago prior month.
-        reference_date (datetime, optional): Use this as the reference date instead of today.
+        start_months_ago: How many months ago to start the date range. Default is 3.
+        end_on_last_day: If True, the end date is set to the last day of the last month.
+            If False, the end date is the first day of the last month.
+        reference_date: Optional reference date. Defaults to today.
 
     Returns:
-        dict: (start_date_gee, end_date_gee)
+        dict[str, str]: Dictionary with keys:
+            - 'start_date_gee': Start date in YYYY-MM-DD format.
+            - 'end_date_gee': End date in YYYY-MM-DD format.
     """
     if reference_date is None:
         reference_date = datetime.today()

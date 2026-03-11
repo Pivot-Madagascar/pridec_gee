@@ -6,19 +6,32 @@ from numpy import nan as np_nan
 from .s1_ard.wrapper import s1_preproc
 from .s1_ard.helper import add_ratio_lin, lin_to_db2
 
-def fetch_sen1_flood(rice_features, date_range, dryRun=True):
-    """
-    Extract Ricefield flooding from Sentinel-1 data. This function is specific to ricefield data from Ifanadiana district (Pivot).
+def fetch_sen1_flood(
+    rice_features: ee.FeatureCollection,
+    date_range: dict[str, str],
+    dryRun: bool = True,
+) -> list[dict]:
+    """Extract Ricefield flooding proportion from Sentinel-1 data. This function is specific to ricefield data from Ifanadiana district (Pivot).
+
+    This function is designed for ricefield data from Ifanadiana district (Pivot),
+    extracting flooding information for each rice field and formatting the results
+    for DHIS2 import.
 
     Args:
-        rice_features (FeatureCollection) : FeatureCollection of rice fields where you want to extract flooding. 
-                                            Should contain values `id` unique to each rice field and `orgUnit` corresponding to the DHIS2 orgUnit hte values will be aggregated to.
-        date_range (list):                   range of dates to download data of. 
-                                                Format is a string (start_date_gee[%Y-%m-%d], end_date_gee[%Y-%m-%d]) 
-        dryRun (bool) :                     whether to perform a test on only 5 images. Useful because this treatment can take a long time
+        rice_features: FeatureCollection of rice fields. Must include:
+            - `id`: unique identifier for each rice field
+            - `orgUnit`: DHIS2 organisation unit to aggregate values to
+        date_range: Dictionary with start and end dates:
+            - 'start_date_gee': start date as YYYY-MM-DD
+            - 'end_date_gee': end date as YYYY-MM-DD
+        dryRun: If True, performs a test using only a small subset of images (default True).
 
     Returns:
-        JSON file with columns orgUnit, period, value, dataElement formatted to submit to DHIS2
+        list of dict: Each dict represents a flooding observation with fields:
+            - 'orgUnit': organisation unit ID
+            - 'period': period of observation (YYYYMM)
+            - 'value': proportion of flooded ricefield
+            - 'dataElement': corresponding DHIS2 data element code
     """
 
     geom = rice_features

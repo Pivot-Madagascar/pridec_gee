@@ -1,21 +1,32 @@
 import requests
 from requests.auth import HTTPBasicAuth
 
-def get_dhis_geojson(parent_ou, ou_level, dhis_url, dhis_user=None, dhis_pwd=None, dhis_token=None):
-    """
-    GETs geojson of orgUnits from DHIS2 instance
-    
+def get_dhis_geojson(
+    parent_ou: str,
+    ou_level: int,
+    dhis_url: str,
+    dhis_user: str | None = None,
+    dhis_pwd: str | None = None,
+    dhis_token: str | None = None,
+) -> dict:
+    """Retrieve organisation unit GeoJSON from a DHIS2 instance.
+
+    Sends a GET request to the DHIS2 GeoJSON API endpoint to retrieve
+    organisation units at a specified level under a parent organisation unit.
+
     Args:
-        parent_ou (string): id of parent orgUnit
-        ou_level (int): hierarchy level of OrgUnit
-        dhis_url (string): base url of DHIS2 instance
-        dhis_user (str, optional) :   username for dhis2 instance
-        dhis_pwd (str, optional)  :   password for dhis2 instance
-        dhis_token (str, optional):   personal access token for dhis2 instance.
-                                 Can be provided instead of user and pwd.
+        parent_ou: UID of the parent organisation unit.
+        ou_level: Organisation unit hierarchy level to retrieve.
+        dhis_url: Base URL of the DHIS2 instance.
+        dhis_user: Username for the DHIS2 instance. Required if
+            `dhis_token` is not provided.
+        dhis_pwd: Password for the DHIS2 instance. Required if
+            `dhis_token` is not provided.
+        dhis_token: Personal access token for the DHIS2 instance.
+            Can be provided instead of `dhis_user` and `dhis_pwd`.
 
     Returns:
-        FeatureCollection: geojson of orgUnits
+        dict: GeoJSON FeatureCollection of organisation units.
     """
 
     if not dhis_token and not (dhis_user and dhis_pwd):

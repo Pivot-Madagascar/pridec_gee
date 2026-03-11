@@ -3,17 +3,27 @@ import pandas as pd
 
 from .utils import month_agg_sp_mean, add_tempC, add_rh, add_dewtempC
 
-def fetch_era5_climate(orgUnit, date_range):
-    """
-    Extract temperature, precipitation, and relative humidity from ERA5 data at monthly frequency
+def fetch_era5_climate(
+    orgUnit: ee.FeatureCollection,
+    date_range: dict[str, str],
+) -> list[dict]:
+    """Extract temperature, precipitation, and relative humidity from ERA5 data.
+
+    Retrieves monthly climate variables for the specified orgUnits from GEE.
+    Outputs a JSON-ready list formatted for DHIS2 import.
 
     Args:
-        orgUnit (ee.FeatureCollection): orgUnit polygons to use for extraction. If None, will get from DHIS2 instance
-                        date_range      range of dates to download data of. 
-                                            Format is a string (start_date_gee[%Y-%m-%d], end_date_gee[%Y-%m-%d])  
+        orgUnit: FeatureCollection of orgUnit polygons to extract data from.
+        date_range: Dictionary containing start and end dates with keys:
+            - 'start_date_gee': YYYY-MM-DD string of start date
+            - 'end_date_gee': YYYY-MM-DD string of end date
 
     Returns:
-        JSON file with columns orgUnit, period, value, dataElement formatted to submit to DHIS2
+        list of dict: Each dict represents a climate measurement with fields:
+            - 'orgUnit': organization unit ID
+            - 'period': period of observation (YYYYMM)
+            - 'value': climate value (e.g., temperature, precipitation)
+            - 'dataElement': corresponding DHIS2 data element code
     """
 
 

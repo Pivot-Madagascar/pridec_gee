@@ -5,27 +5,46 @@ from datetime import datetime
 
 from dateutil.relativedelta import relativedelta
 
-def delete_historic_climate(base_url, dataElement, delete_month_range, orgUnit_ids, user=None, pwd=None, token=None, dryRun=False):
-    """
-    Deletes climate dataElement values from the provided date range and orgUnits
+def delete_historic_climate(
+    base_url: str,
+    dataElement: str,
+    delete_month_range: list[str],
+    orgUnit_ids: list[str],
+    user: str | None = None,
+    pwd: str | None = None,
+    token: str | None = None,
+    dryRun: bool = False,
+) -> requests.Response:
+    """Delete historic climate data values from a DHIS2 instance.
+
+    Deletes values for a specified climate data element across a given
+    range of months and a list of organisation units.
 
     Args:
-        base_url (str)              url of dhis2 instance
-        dataElement (str)           code of dataElement to delete. Example: 'pridec_climate_AOD'
-        delete_month_range (list)   range of months of data to delete in YYYYMM format. Example: ["202201", "202208"]
-        orgUnit_ids (list)          list of orgUnit ids to delete data from
-        user (str, optional)        username for dhis2 instance
-        pwd (str, optional)         password for dhis2 instance
-        token (str, optional)       personal access token for dhis2 instance.
-                                    Can be provided instead of user and pwd.
-        dryRun (boolean)            True: test a dry run of the POST
-                                    False: actually post the data
-    
+        base_url: URL of the DHIS2 instance.
+        dataElement: Code of the data element to delete
+            (e.g., "pridec_climate_AOD").
+        delete_month_range: Start and end months for deletion in YYYYMM
+            format (e.g., ["202201", "202208"]).
+        orgUnit_ids: List of organisation unit UIDs to delete data from.
+        user: Username for the DHIS2 instance. Required if `token`
+            is not provided.
+        pwd: Password for the DHIS2 instance. Required if `token`
+            is not provided.
+        token: Personal access token for the DHIS2 instance. Can be
+            provided instead of `user` and `pwd`.
+        dryRun: If True, perform a dry run of the deletion request.
+            If False, execute the deletion.
+
     Returns:
-        requests.Response: Response object from POST request
+        requests.Response: Response object returned by the DHIS2 POST request.
     """
     if not token and not (user and pwd):
         raise ValueError("Authentication required: provide either a token or both user and pwd")
+    
+    if dryRun:
+        print("Running in dryRun mode. No data will be deleted.")
+
     
     #create json of full range to delete
     start_date = datetime.strptime(delete_month_range[0], "%Y%m")
@@ -42,7 +61,7 @@ def delete_historic_climate(base_url, dataElement, delete_month_range, orgUnit_i
     delete_json = {"dataValues": full_range.to_dict(orient='records')}
 
     endpoint = (
-        "api/dataValueSets"
+        "/api/dataValueSets"
         f"?dryRun={'true' if dryRun else 'false'}"
         "&dataElementIdScheme=code"
         "&orgUnitIdScheme=uid"
@@ -53,7 +72,7 @@ def delete_historic_climate(base_url, dataElement, delete_month_range, orgUnit_i
     )
 
 
-    url = f"{base_url.rstrip('/')}/{endpoint}"
+    url = f"{base_url.rstrip('/')}{endpoint}"
 
     # Authentication setup
     headers = {'Authorization': f'ApiToken {token}'} if token else {}
@@ -63,7 +82,7 @@ def delete_historic_climate(base_url, dataElement, delete_month_range, orgUnit_i
         print("You are not in dryRun mode. This will delete data on your instance.")
         validate_delete = input("Confirm that you want to continue (yes/no):")
         if validate_delete != "yes":
-            print("Existing process without deleting...")
+            print("Exiting process without deleting...")
             return
 
 

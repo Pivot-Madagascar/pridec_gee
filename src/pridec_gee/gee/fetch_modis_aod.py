@@ -3,17 +3,28 @@ import pandas as pd
 
 from .utils import month_agg_sp_mean
 
-def fetch_modis_aod(orgUnit, date_range):
+def fetch_modis_aod(
+    orgUnit: ee.FeatureCollection,
+    date_range: dict[str, str],
+) -> list[dict]:
     """
-    Extracts mean Aerosol Optical Depth from MODIS satellite by month for orgUnits from DHIS2
+    Extracts mean Aerosol Optical Depth from MODIS
+
+    Retrieves monthly climate variables for the specified orgUnits from GEE.
+    Outputs a JSON-ready list formatted for DHIS2 import.
 
     Args:
-        orgUnit (ee.FeatureCollection):     orgUnit polygons to use for extraction. If None, will get from DHIS2 instance
-        date_range (list):                   range of dates to download data of. 
-                                                Format is a string (start_date_gee[%Y-%m-%d], end_date_gee[%Y-%m-%d]) 
+        orgUnit: FeatureCollection of orgUnit polygons to extract data from.
+        date_range: Dictionary containing start and end dates with keys:
+            - 'start_date_gee': YYYY-MM-DD string of start date
+            - 'end_date_gee': YYYY-MM-DD string of end date
 
     Returns:
-        JSON file with columns orgUnit, period, value, dataElement formatted to submit to DHIS2
+        list of dict: Each dict represents a climate measurement with fields:
+            - 'orgUnit': organization unit ID
+            - 'period': period of observation (YYYYMM)
+            - 'value': climate value (e.g., temperature, precipitation)
+            - 'dataElement': corresponding DHIS2 data element code
     """
 
     ic = ee.ImageCollection("MODIS/061/MCD19A2_GRANULES").filterBounds(orgUnit)

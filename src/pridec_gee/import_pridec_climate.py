@@ -13,29 +13,36 @@ from .gee.fetch_sen2_indicators import fetch_sen2_indicators
 from .dhis2.get_dhis_geojson import get_dhis_geojson
 from .dhis2.post_climate import post_climate
 
-def import_pridec_climate(dhis_url, date_range, orgUnit=None, parent_ou=None, ou_level=None, 
-                       variables=["fewsnet","era5", "modis_aod", "modis_fire", "sen2", "sen1_flood"], 
-                       rice_features=None,
-                       dhis_user=None, dhis_pwd=None, dhis_token=None, dryRun=True):
+def import_pridec_climate(
+    dhis_url: str,
+    date_range: Dict[str, str],
+    orgUnit: Optional[ee.FeatureCollection] = None,
+    parent_ou: Optional[str] = None,
+    ou_level: Optional[int] = None,
+    variables: Optional[List[str]] = None,
+    rice_features: Optional[ee.FeatureCollection] = None,
+    dhis_user: Optional[str] = None,
+    dhis_pwd: Optional[str] = None,
+    dhis_token: Optional[str] = None,
+    dryRun: bool = True,
+) -> requests.Response:
     """
-    Import PRIDE-C variables into a DHIS2 instance
+    Import PRIDE-C variables into a DHIS2 instance.
 
     Args:
-        dhis_url (str)                      url of dhis2 instance
-        orgUnit (FeatureCollection, opt)    FeatureCollection of orgUnits to download
-        parent_ou (str, Optional)           uid of parent orgUnit for geojson download
-        ou_level (int, Optional)            hierarchical level of orgUnit to extract for
-        date_range (list)                   range of dates to download data 
-                                                Format is a string (start_date_gee[%Y-%m-%d], end_date_gee[%Y-%m-%d])  
-        variables (list)                    list containing all or a subset of the following:
-                                                ["fewsnet","era5", "modis_aod", "modis_fire", "sen2", "sen1_flood"]
-        rice_features                       ee.Feature Collection of rice fields if importing `sen1_flood` data
-        dhis_user (str, optional)           username for dhis2 instance
-        dhis_pwd (str, optional)            password for dhis2 instance
-        dhis_token (str, optional)          personal access token for dhis2 instance.
-                                            Can be provided instead of user and pwd.
-        dryRun (boolean)                    True: test a dry run of the POST
-                                            False: actually post the data
+        dhis_url: URL of the DHIS2 instance.
+        date_range: Dictionary with keys 'start_date_gee' and 'end_date_gee'
+            representing the date range to download.
+        orgUnit: FeatureCollection of orgUnits to download (optional).
+        parent_ou: UID of parent orgUnit for GeoJSON download (optional).
+        ou_level: Hierarchical level of orgUnit to extract for (optional).
+        variables: List of variables to import. Defaults to all:
+            ["fewsnet","era5", "modis_aod", "modis_fire", "sen2", "sen1_flood"].
+        rice_features: FeatureCollection of rice fields if importing `sen1_flood` data.
+        dhis_user: Username for DHIS2 instance (optional).
+        dhis_pwd: Password for DHIS2 instance (optional).
+        dhis_token: Personal access token for DHIS2. Can be used instead of `dhis_user`/`dhis_pwd`.
+        dryRun: If True, performs a dry run without posting data and using only 5 `sen1_flood` images. Defaults to True.
 
     Returns:
         requests.Response: Response object from POST requests

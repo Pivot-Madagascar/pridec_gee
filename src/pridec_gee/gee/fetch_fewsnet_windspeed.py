@@ -5,17 +5,27 @@ import pandas as pd
 from .utils import month_agg_sp_mean
 from .calc_date_range import enforce_two_month_lag
 
-def fetch_fewsnet_windspeed(orgUnit, date_range):
-    """
-    Fetch FEWSNET Windspeed data from GEE for specified orgUnits at monthly frequency
+def fetch_fewsnet_windspeed(
+    orgUnit: ee.FeatureCollection,
+    date_range: dict[str, str],
+) -> list[dict]:
+    """Extract windspeed from FEWSNET data.
 
-        Args:
-        orgUnit (ee.FeatureCollection):     orgUnit polygons to use for extraction. If None, will get from DHIS2 instance
-        date_range (list)                   range of dates to download data of. 
-                                                Format is a string (start_date_gee[%Y-%m-%d], end_date_gee[%Y-%m-%d]) 
+    Retrieves monthly climate variables for the specified orgUnits from GEE.
+    Outputs a JSON-ready list formatted for DHIS2 import.
+
+    Args:
+        orgUnit: FeatureCollection of orgUnit polygons to extract data from.
+        date_range: Dictionary containing start and end dates with keys:
+            - 'start_date_gee': YYYY-MM-DD string of start date
+            - 'end_date_gee': YYYY-MM-DD string of end date
 
     Returns:
-        JSON file with columns orgUnit, period, value, dataElement formatted to submit to DHIS2
+        list of dict: Each dict represents a climate measurement with fields:
+            - 'orgUnit': organization unit ID
+            - 'period': period of observation (YYYYMM)
+            - 'value': climate value (e.g., temperature, precipitation)
+            - 'dataElement': corresponding DHIS2 data element code
     """
 
     ic = ee.ImageCollection("NASA/FLDAS/NOAH01/C/GL/M/V001").filterBounds(orgUnit)
