@@ -1,6 +1,5 @@
 ee==0.2
 earthengine-api==1.5.23
-geemap==0.35.3
 numpy==2.3.1
 pandas==2.3.1
 python_dateutil==2.9.0.post0

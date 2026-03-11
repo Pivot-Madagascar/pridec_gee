@@ -1,6 +1,6 @@
-.env
+*.env
 client_secret.json
-.gee-private-key.json
+*.gee-private-key.json
 .private-key.json
 .venv/
 .vscode/

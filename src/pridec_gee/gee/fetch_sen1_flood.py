@@ -1,35 +1,46 @@
 import ee
 import pandas as pd
-import json
 from numpy import nan as np_nan
 
-from utils.get_date_range import get_date_range
-from utils.gee_s1_ard.wrapper import s1_preproc
-from utils.gee_s1_ard.helper import add_ratio_lin, lin_to_db2
 
-def fetch_sen1_flood(rice_geojson_file, test_run=True, historical_months=3):
-    """
-    Extract Ricefield flooding from Sentinel-1 data. This is specific to Ifanadiana district for now
+from .s1_ard.wrapper import s1_preproc
+from .s1_ard.helper import add_ratio_lin, lin_to_db2
+
+def fetch_sen1_flood(
+    rice_features: ee.FeatureCollection,
+    date_range: dict[str, str],
+    dryRun: bool = True,
+) -> list[dict]:
+    """Extract Ricefield flooding proportion from Sentinel-1 data. This function is specific to ricefield data from Ifanadiana district (Pivot).
+
+    This function is designed for ricefield data from Ifanadiana district (Pivot),
+    extracting flooding information for each rice field and formatting the results
+    for DHIS2 import.
 
     Args:
-        rice_geojson_file (string) : path to geojson file containing rice fields where you want to extract flooding
-        test_run (bool) : whether to perofrm a test on only 10 images. Useful because this treatment can take a long time
-        historical_months (int, optional): how many prior months of data to import. Default = 3
+        rice_features: FeatureCollection of rice fields. Must include:
+            - `id`: unique identifier for each rice field
+            - `orgUnit`: DHIS2 organisation unit to aggregate values to
+        date_range: Dictionary with start and end dates:
+            - 'start_date_gee': start date as YYYY-MM-DD
+            - 'end_date_gee': end date as YYYY-MM-DD
+        dryRun: If True, performs a test using only a small subset of images (default True).
 
     Returns:
-        json of flooding data formatted for DHIS2 as dataValues
+        list of dict: Each dict represents a flooding observation with fields:
+            - 'orgUnit': organisation unit ID
+            - 'period': period of observation (YYYYMM)
+            - 'value': proportion of flooded ricefield
+            - 'dataElement': corresponding DHIS2 data element code
     """
-    # rice_geojson_file = "data/major-rice-orgUnit.geojson"
-    with open(rice_geojson_file) as f:
-        geojson_data = json.load(f)
 
-    geom = ee.FeatureCollection(geojson_data)
+    geom = rice_features
     rice_area = geom.map(
         lambda f: f.set("area", f.geometry().area())
     )
 
-    bbox = ee.Geometry.Rectangle([46,-23,49.5,-19], 'EPSG:4326')
-    date_range =  get_date_range(end_months_ago = 1, end_on_last_day=True, start_months_ago = historical_months)
+    # bbox = ee.Geometry.Rectangle([46,-23,49.5,-19], 'EPSG:4326')
+    bbox = geom.bounds()
 
     fxparams = {
         # 1. Data selection
@@ -91,8 +102,8 @@ def fetch_sen1_flood(rice_geojson_file, test_run=True, historical_months=3):
         )
     
     image_flood = s1_processed.map(threshold_flood)
-    if test_run:
-        image_list = image_flood.limit(10).toList(10)  #for testing
+    if dryRun:
+        image_list = image_flood.limit(3).toList(3)  #for testing
     else:
         image_list = image_flood.toList(image_flood.size())
 

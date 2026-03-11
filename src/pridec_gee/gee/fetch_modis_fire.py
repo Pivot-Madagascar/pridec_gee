@@ -1,41 +1,31 @@
 import ee
 import pandas as pd
-import geemap
-import json
-import requests
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
 
-
-from utils.get_dhis_geojson import get_dhis_geojson
-from utils.gee_utils import zonal_stats, month_agg_sp_mean
-from utils.get_date_range import get_date_range
-import os
-
-def fetch_modis_fire(dhis_token=None, dhis_url=None, PARENT_OU=None, OU_LEVEL=None, orgUnit=None, historical_months=3):
+def fetch_modis_fire(
+    orgUnit: ee.FeatureCollection,
+    date_range: dict[str, str],
+) -> list[dict]:
     """
-    Extracts mean Aerosol Optical Depth from MODIS satellite by month for orgUnits from DHIS2
+    Extracts proportion of area experiencing a fire from MODIS
+
+    Retrieves monthly fire data for the specified orgUnits from GEE.
+    Outputs a JSON-ready list formatted for DHIS2 import.
 
     Args:
-        dhis_token (string, optional) : personal access token for DHIS instance
-        dhis_url (string, optional) : base url of DHIS for APIs
-        PARENT_OU (string, optional) : id of orgUnit that contains the geojsons to extract for
-        OU_LEVEL (string, optional) : hierarchical orgUnit level for the geojson to extract for
-        orgUnit (ee.FeatureCollection, optional) orgUnit polygons to use for extractoin. If None, will get from DHIS2 instance
-        historical_months (int, optional): how many prior months of data to import. Default = 3
+        orgUnit: FeatureCollection of orgUnit polygons to extract data from.
+        date_range: Dictionary containing start and end dates with keys:
+            - 'start_date_gee': YYYY-MM-DD string of start date
+            - 'end_date_gee': YYYY-MM-DD string of end date
 
     Returns:
-        something
+        list of dict: Each dict represents a climate measurement with fields:
+            - 'orgUnit': organization unit ID
+            - 'period': period of observation (YYYYMM)
+            - 'value': climate value (e.g., temperature, precipitation)
+            - 'dataElement': corresponding DHIS2 data element code
     """
 
-    #get orgUnits from DHIS2 if not provided
-    if orgUnit is None:
-        org_units = get_dhis_geojson(PARENT_OU=PARENT_OU, OU_LEVEL=OU_LEVEL, dhis_token=dhis_token, dhis_url=dhis_url, historical_months=3)
-        orgUnit = ee.FeatureCollection(org_units)
-
-    date_range =  get_date_range(end_months_ago = 1, end_on_last_day=False, start_months_ago=historical_months)
-
-    ic = ee.ImageCollection("MODIS/061/MYD14A2").filterBounds(orgUnit).filterDate("2015-01-01", datetime.today())
+    ic = ee.ImageCollection("MODIS/061/MYD14A2").filterBounds(orgUnit)
     #defaut parameters from first image
     img_rep = ic.first()
     default_scale = img_rep.select([0]).projection().nominalScale().getInfo()
@@ -58,10 +48,10 @@ def fetch_modis_fire(dhis_token=None, dhis_url=None, PARENT_OU=None, OU_LEVEL=No
                          .select('FireMask')
         
         #get maximum value for each pixel in Firemask during the month
-        reduce_step1 = filter_step.reduce(  # Apply reducer
+        reduce_step1 = filter_step.reduce(  
             reducer = ee.Reducer.max()
         )
-        #then reclassify to only keep pixels with 7 or greater (low confidence of fire)
+        #then reclassify to only keep pixels with 7 or greater (low confidence of fire and above)
         reduce_step2 = reduce_step1.gte(7) \
         .set('system:time_start', start_date.millis()).set('year_month', start_date.format("YYYYMM"))
 
@@ -70,7 +60,7 @@ def fetch_modis_fire(dhis_token=None, dhis_url=None, PARENT_OU=None, OU_LEVEL=No
     # Map over the list of dates and create monthly aggregated image collection
     ic_month = ee.ImageCollection(dates.map(month_func).flatten())
 
-    # Function for calculating spatial mean by region
+    # Function for calculating spatial mean by region. Defined here because map only takes one arg
     def calc_spatial_mean(image):
         # Reduce the image by regions
         reduced = image.reduceRegions(
@@ -79,12 +69,12 @@ def fetch_modis_fire(dhis_token=None, dhis_url=None, PARENT_OU=None, OU_LEVEL=No
             scale=default_scale,
             crs="EPSG:4326"
         )
-        
+            
         # Add metadata to each feature
         return reduced.map(lambda f: f.set({
-            'period': image.get('year_month')
+                'period': image.get('year_month')
         }).setGeometry(None))  # Remove geometry to save space
-    
+        
     # Apply the spatial mean function to each image in the collection
     results_fc = ic_month.map(calc_spatial_mean).flatten()
     results_list = results_fc.getInfo()
@@ -113,3 +103,4 @@ def fetch_modis_fire(dhis_token=None, dhis_url=None, PARENT_OU=None, OU_LEVEL=No
     }
 
     return df_dict
+

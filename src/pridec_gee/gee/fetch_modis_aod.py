@@ -1,47 +1,39 @@
 import ee
 import pandas as pd
-import geemap
-import json
-import requests
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
 
+from .utils import month_agg_sp_mean
 
-from utils.get_dhis_geojson import get_dhis_geojson
-from utils.gee_utils import zonal_stats, month_agg_sp_mean
-from utils.get_date_range import get_date_range
-import os
-
-def fetch_modis_aod(dhis_token=None, dhis_url=None, PARENT_OU=None, OU_LEVEL=None, orgUnit=None, historical_months=3):
+def fetch_modis_aod(
+    orgUnit: ee.FeatureCollection,
+    date_range: dict[str, str],
+) -> list[dict]:
     """
-    Extracts mean Aerosol Optical Depth from MODIS satellite by month for orgUnits from DHIS2
+    Extracts mean Aerosol Optical Depth from MODIS
+
+    Retrieves monthly climate variables for the specified orgUnits from GEE.
+    Outputs a JSON-ready list formatted for DHIS2 import.
 
     Args:
-        dhis_token (string, optional) : personal access token for DHIS instance
-        dhis_url (string, optional) : base url of DHIS for APIs
-        PARENT_OU (string, optional) : id of orgUnit that contains the geojsons to extract for
-        OU_LEVEL (string) : hierarchical orgUnit level for the geojson to extract for
-        orgUnit (ee.FeatureCollection, optional) orgUnit polygons to use for extractoin. If None, will get from DHIS2 instance
-        historical_months (int, optional): how many prior months of data to import. Default = 3
+        orgUnit: FeatureCollection of orgUnit polygons to extract data from.
+        date_range: Dictionary containing start and end dates with keys:
+            - 'start_date_gee': YYYY-MM-DD string of start date
+            - 'end_date_gee': YYYY-MM-DD string of end date
 
     Returns:
-        json of AOD formatted for DHIS2 instance
+        list of dict: Each dict represents a climate measurement with fields:
+            - 'orgUnit': organization unit ID
+            - 'period': period of observation (YYYYMM)
+            - 'value': climate value (e.g., temperature, precipitation)
+            - 'dataElement': corresponding DHIS2 data element code
     """
 
-    #get orgUnits from DHIS2 if not provided
-    if orgUnit is None:
-        org_units = get_dhis_geojson(PARENT_OU=PARENT_OU, OU_LEVEL=OU_LEVEL, dhis_token=dhis_token, dhis_url=dhis_url)
-        orgUnit = ee.FeatureCollection(org_units)
-
-    date_range =  get_date_range(end_months_ago = 1, end_on_last_day=False, start_months_ago=historical_months)
-
-    ic = ee.ImageCollection("MODIS/061/MCD19A2_GRANULES").filterBounds(orgUnit).filterDate("2015-01-01", datetime.today())
+    ic = ee.ImageCollection("MODIS/061/MCD19A2_GRANULES").filterBounds(orgUnit)
     ic_mask = ic.map(apply_qa_mask) 
 
     fxparams = {
-    'reducer': ee.Reducer.mean(),  # Change the reducer if needed
-    'bands': ['Optical_Depth_047',],  # Example bands
-    'bandsRename': ['AOD47']  # Rename bands
+    'reducer': ee.Reducer.mean(),  
+    'bands': ['Optical_Depth_047',],  
+    'bandsRename': ['AOD47']  
     }
 
     result = month_agg_sp_mean(ic_mask, orgUnit, date_range['start_date_gee'], date_range['end_date_gee'], fxparams)

@@ -1,10 +1,77 @@
-# Notes for PRIDE-C GEE package
+# Notes for PRIDE-C GEE package [pridec_gee]
 
 ## Common commands
 
 `pipreqs`: save requirements.txt file with list of dependencies
+`pip install -r requirements`: install requirements
 `source .venv/bin/activate`: activate venv
+`pip install -e .`: install editable for during development
 
+## 2026-03-02
+
+The wrapper function seems to work, but the error messages leave a lot to be desired. I will need to work on this and the testing in the future.
+
+Doign some ad-hoc testing in `scratch/test_package.py`
+
+Saved pivot-specific rice fields in a data place.
+
+FEWSNET has a super slow latency. For example, today, it only has the data available for January (not Feb), and won't have February until the end of march. So I will just drop from analyses for now. Done, except actulaly it is doing it based on the label and not the end date. So I need to fix that. [done]
+
+REalized I don't even use the start and end lable bits of the date range so this could just be two string dates without a name, which would be must easier. I just ened to update all the functions to deal with that. But that can be done later. [done]
+
+Tested the climate_docker_service on a local isntance and it worked!
+
+**TO DO:**
+- configure full testing infrastructure with env variables and offline testing [still working on getting something to work with tokens]
+- document and build with `uv`
+- update docker with this package and scripts for certain calls `climate_docker_service.py` has this for now.
+
+
+## 2026-02-27
+
+Writing wrapper function so it should then be able to be integrated into the docker image. Nearly done
+
+
+**TO DO**
+- configure full testing infrastructure with env variables and offline testing [still working on getting something to work with tokens]
+- document and build with `uv`
+- wrap wrapper function to run multiple climate variables at once. Then each can be turned on/off in one call.
+
+
+## 2026-02-25
+
+Started restructuring using a `src` directory structure. Also rewrote the fetch functions to be more generalizable for other needs with DHIS2 data and GEE. And wrote tests for the functions.
+
+All of the gee functions have been updated and tested.
+
+I need to decide whether I want to leave the DHIS2 functions here or not? I think the ability to delete and manage the climate data could be useful. So like, POST, DELETE, GET names of dataElements with climate? Also getting the geojson. This way everything could just be done in this package if needed. I will get rid of the analytics launching though. And still make a seperate package for Pivot's own dhis2 tools. [done]
+
+**TO DO**
+- configure full testing infrastructure with env variables and offline testing [still working on getting something to work with tokens]
+- rewrite/structure dhis2 module [done]
+- document and build with `uv`
+- wrap wrapper function to run multiple climate variables at once. Then each can be turned on/off in one call.
+
+## 2026-02-23
+
+I've renamed the github repo for this so that it follows Python naming conventions. 
+
+**TO DO**:
+- restructure code [remove delete,get,post, etc.]
+- use actual gee_s1_processing package [ actually not using this because it is a bit too different]
+
+## 2026-02-19
+
+I may work on creating the package in a seperate branch so as not to mess with this one as much. In a package-dev branch now.
+
+Also, rahter than directly copying the python files for the Sentinel-1 processing, it may be easier to just call the package, now that it seems to be supported in PyPI: https://github.com/LSCE-forest/gee_s1_processing/tree/main (https://libraries.io/pypi/gee_s1_processing).
+
+i also renamed the repo to pridec_gee so that it works in PyPI. I think I will essentially just expose the main climate_data function, and then add argumnets so the user can choose what to import. I will have to think abotu how the flood data works since that is the one fully specific to Pivot (or at least this region of Mada). I could add something so the threshold can be user supplied for other regions? But for now I will leave. IT also depends on data specific to us, but that could be provided I guess.
+
+
+## 2026-02-10
+
+Given our current ETL structure, we have decided the easiest way to use these scripts (and make it shareable), is to structure it as a python package. This will involve restructuring and cleaning up the repo a bit, and then doing the changes we decided on after havin Toky test it.
 
 ## 2025-08-11
 
