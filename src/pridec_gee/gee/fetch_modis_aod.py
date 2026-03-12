@@ -6,7 +6,7 @@ from .utils import month_agg_sp_mean
 def fetch_modis_aod(
     orgUnit: ee.FeatureCollection,
     date_range: dict[str, str],
-) -> list[dict]:
+):
     """
     Extracts mean Aerosol Optical Depth from MODIS
 

@@ -7,7 +7,7 @@ from .utils import month_agg_sp_mean, mask_s2_clouds, add_evi, add_gao, add_mndw
 def fetch_sen2_indicators(
     orgUnit: ee.FeatureCollection,
     date_range: dict[str, str],
-) -> list[dict]:
+):
     """Extract EVI, MNDWI, and NDWI-GAO at monthly frequency from Sentinel-2 data.
 
     Retrieves monthly vegetation and water indices for the specified orgUnits.

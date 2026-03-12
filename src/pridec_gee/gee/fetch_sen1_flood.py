@@ -9,13 +9,13 @@ from .s1_ard.helper import add_ratio_lin, lin_to_db2
 def fetch_sen1_flood(
     rice_features: ee.FeatureCollection,
     date_range: dict[str, str],
-    dryRun: bool = True,
-) -> list[dict]:
+    test_run: bool = True,
+):
     """Extract Ricefield flooding proportion from Sentinel-1 data. This function is specific to ricefield data from Ifanadiana district (Pivot).
 
     This function is designed for ricefield data from Ifanadiana district (Pivot),
-    extracting flooding information for each rice field and formatting the results
-    for DHIS2 import.
+    extracting flooding information for each rice field.
+    Outputs a JSON-ready list formatted for DHIS2 import.
 
     Args:
         rice_features: FeatureCollection of rice fields. Must include:
@@ -24,7 +24,7 @@ def fetch_sen1_flood(
         date_range: Dictionary with start and end dates:
             - 'start_date_gee': start date as YYYY-MM-DD
             - 'end_date_gee': end date as YYYY-MM-DD
-        dryRun: If True, performs a test using only a small subset of images (default True).
+        test_run: If True, performs a test using only a small subset of images (default True).
 
     Returns:
         list of dict: Each dict represents a flooding observation with fields:
@@ -102,7 +102,7 @@ def fetch_sen1_flood(
         )
     
     image_flood = s1_processed.map(threshold_flood)
-    if dryRun:
+    if test_run:
         image_list = image_flood.limit(3).toList(3)  #for testing
     else:
         image_list = image_flood.toList(image_flood.size())

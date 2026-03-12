@@ -14,7 +14,7 @@ def delete_historic_climate(
     pwd: str | None = None,
     token: str | None = None,
     dryRun: bool = False,
-) -> requests.Response:
+):
     """Delete historic climate data values from a DHIS2 instance.
 
     Deletes values for a specified climate data element across a given

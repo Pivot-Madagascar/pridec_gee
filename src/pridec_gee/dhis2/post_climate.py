@@ -8,7 +8,7 @@ def post_climate(
     pwd: str | None = None,
     token: str | None = None,
     dryRun: bool = False,
-) -> requests.Response:
+):
     """Post climate dataElement values to a DHIS2 instance.
 
     Can be used for climate data or any other dataElement. Sends a POST
@@ -48,20 +48,6 @@ def post_climate(
     headers = {'Authorization': f'ApiToken {token}'} if token else {}
     auth = None if token else HTTPBasicAuth(user, pwd)
     
-    #send request
     response = requests.post(url, headers=headers, auth=auth, json=payload)
-
-    # def clean_json_resp(resp):
-    #     try:
-    #         resp.json()
-    #     except:
-    #         "Empty API Response"
-    
-    # resp_text = clean_json_resp(response)
-
-    # resp.json().get("httpStatus")
-    # resp.json().get("status")
-    # resp.json().get("message")
-    # resp_text = response.json().get("response") #for debugging
 
     return response

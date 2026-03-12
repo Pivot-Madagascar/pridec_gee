@@ -8,7 +8,7 @@ from .calc_date_range import enforce_two_month_lag
 def fetch_fewsnet_windspeed(
     orgUnit: ee.FeatureCollection,
     date_range: dict[str, str],
-) -> list[dict]:
+):
     """Extract windspeed from FEWSNET data.
 
     Retrieves monthly climate variables for the specified orgUnits from GEE.

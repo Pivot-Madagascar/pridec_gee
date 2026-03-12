@@ -6,7 +6,7 @@ from .utils import month_agg_sp_mean, add_tempC, add_rh, add_dewtempC
 def fetch_era5_climate(
     orgUnit: ee.FeatureCollection,
     date_range: dict[str, str],
-) -> list[dict]:
+):
     """Extract temperature, precipitation, and relative humidity from ERA5 data.
 
     Retrieves monthly climate variables for the specified orgUnits from GEE.

@@ -15,17 +15,17 @@ from .dhis2.post_climate import post_climate
 
 def import_pridec_climate(
     dhis_url: str,
-    date_range: Dict[str, str],
-    orgUnit: Optional[ee.FeatureCollection] = None,
-    parent_ou: Optional[str] = None,
-    ou_level: Optional[int] = None,
-    variables: Optional[List[str]] = None,
-    rice_features: Optional[ee.FeatureCollection] = None,
-    dhis_user: Optional[str] = None,
-    dhis_pwd: Optional[str] = None,
-    dhis_token: Optional[str] = None,
+    date_range: dict[str, str],
+    orgUnit: ee.FeatureCollection = None,
+    parent_ou: str = None,
+    ou_level: int = None,
+    variables: list[str] = None,
+    rice_features: ee.FeatureCollection = None,
+    dhis_user: str = None,
+    dhis_pwd: str = None,
+    dhis_token: str = None,
     dryRun: bool = True,
-) -> requests.Response:
+):
     """
     Import PRIDE-C variables into a DHIS2 instance.
 

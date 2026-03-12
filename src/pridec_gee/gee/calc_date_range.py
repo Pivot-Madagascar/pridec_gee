@@ -4,8 +4,8 @@ from dateutil.relativedelta import relativedelta
 def calc_date_range(
     start_months_ago: int = 3,
     end_on_last_day: bool = True,
-    reference_date: datetime.date | None = None,
-) -> dict[str, str]:
+    reference_date: datetime.date = None,
+):
     """Calculate a date range label for a period in months relative to a reference date.
 
     Returns start and end dates for a period starting from the first day of

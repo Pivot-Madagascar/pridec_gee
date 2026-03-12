@@ -3,10 +3,10 @@ from requests.auth import HTTPBasicAuth
 
 def get_pridec_elements(
     dhis_url: str,
-    dhis_user: str | None = None,
-    dhis_pwd: str | None = None,
-    dhis_token: str | None = None,
-) -> list[dict]:
+    dhis_user: str  = None,
+    dhis_pwd: str  = None,
+    dhis_token: str = None,
+):
     """Retrieve PRIDE-C climate data elements from a DHIS2 instance.
 
     Sends a GET request to retrieve all data elements associated with the
@@ -26,13 +26,6 @@ def get_pridec_elements(
         `name`, `code`, and `id`.
     """
 
-    #test/debugging
-    import os
-    from dotenv import load_dotenv
-    load_dotenv(override=True)
-    dhis_url = os.environ.get("DHIS2_URL")
-    dhis_token = os.getenv("DHIS2_TOKEN")
-
     if not dhis_token and not (dhis_user and dhis_pwd):
         raise ValueError("Authentication required: provide either a token or both user and pwd")
 
@@ -47,8 +40,15 @@ def get_pridec_elements(
         f"&paging=false"
     )
     resp = requests.get(url, headers=headers, auth=auth)
-    de_info = resp.json().get('dataElements')
-    #pd.json_normalize(de_info).sort_values(by = 'code') #for nice pandas DataFrame
-    
-    return de_info
+
+    if resp.ok:
+         de_info = resp.json().get('dataElements')
+         return de_info
+        #pd.json_normalize(de_info).sort_values(by = 'code') #for nice pandas DataFrame
+    else:
+        print(f"API Connection failed with")
+        print(f"url={url}")
+        print(f"headers={headers}")
+        print(f"auth={auth}")
+        return resp
 

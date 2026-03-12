@@ -4,7 +4,7 @@ import pandas as pd
 def fetch_modis_fire(
     orgUnit: ee.FeatureCollection,
     date_range: dict[str, str],
-) -> list[dict]:
+):
     """
     Extracts proportion of area experiencing a fire from MODIS
 

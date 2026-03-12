@@ -8,7 +8,7 @@ def get_dhis_geojson(
     dhis_user: str | None = None,
     dhis_pwd: str | None = None,
     dhis_token: str | None = None,
-) -> dict:
+):
     """Retrieve organisation unit GeoJSON from a DHIS2 instance.
 
     Sends a GET request to the DHIS2 GeoJSON API endpoint to retrieve
