@@ -1,12 +1,16 @@
-import os
-from dotenv import load_dotenv
-load_dotenv(override=True)
-
-dhis_url = os.environ.get("DHIS2_URL")
-dhis_token = os.getenv("DHIS2_TOKEN")
-
 from pridec_gee import get_pridec_elements
 
-def test_get_pridec_de():
+debug=False
+if debug:
+    import os
+    from dotenv import load_dotenv
+    load_dotenv(override=True)
+    dhis_url = os.environ.get("DHIS_URL")
+    dhis_token = os.getenv("DHIS_TOKEN")
 
-    get_pridec_elements(dhis_url = dhis_url, dhis_token=dhis_token)
+def test_get_pridec_elements(dhis_url, dhis_token):
+
+    output = get_pridec_elements(dhis_url=dhis_url, dhis_token=dhis_token)
+
+    assert output[0]['code'] == 'pridec_climate_AOD'
+    assert len(output)==11

@@ -1,35 +1,32 @@
-import json
 import ee
-import os
 
+from pridec_gee import fetch_modis_fire
 
-# from pridec_gee import fetch_modis_fire
+debug=False
+if debug:
+    import json
+    import os
+    from dotenv import load_dotenv
+    load_dotenv()
+    ee.Authenticate()
+    ee.Initialize(project=os.getenv("GEE_PROJECT"))
+    geojson_path = "tests/data/test_polygons.geojson"
+    with open(geojson_path, 'r') as f:
+        test_polygons = json.load(f)
 
-from src.pridec_gee.gee.fetch_modis_fire import fetch_modis_fire
+def test_modis_fire_downloads(test_polygons, gee_service_account, gee_key):
 
-#initialize (should be done in conftest.py)
-ee.Authenticate()
-ee.Initialize(project='ee-mevans-pridec')
-
-def test_modis_fire_downloads():
-
-    credentials = ee.ServiceAccountCredentials(os.environ.get("GEE_SERVICE_ACCOUNT"), ".gee-private-key.json")
+    #gee authentication
+    credentials = ee.ServiceAccountCredentials(gee_service_account, gee_key)
     ee.Initialize(credentials)
 
-    #replace with test polygon
-    geojson_path = "scratch/csb_orgUnit_dhis.geojson"
-    with open(geojson_path, 'r') as f:
-        geojson_data = json.load(f)
-
-    orgUnit = ee.FeatureCollection(geojson_data)
+    orgUnit = ee.FeatureCollection(test_polygons)
 
     date_range = {
         "start_date_gee":"2025-01-01",
-        "end_date_gee": "2025-04-30"
+        "end_date_gee": "2025-01-30"
     }
 
-    climate_data = fetch_modis_fire(orgUnit, date_range)
+    output = fetch_modis_fire(orgUnit, date_range)
 
-    print(climate_data)
-
-test_modis_fire_downloads()
+    assert output['dataValues'][0]['value'] == 0.008814

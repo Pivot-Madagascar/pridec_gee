@@ -1,30 +1,30 @@
-import json
 import ee
+from pridec_gee import fetch_sen2_indicators
 
-# from pridec_gee import fetch_sen2_indicators
-
-from src.pridec_gee.gee.fetch_sen2_indicators import fetch_sen2_indicators
-
-#initialize (should be done in conftest.py)
-ee.Authenticate()
-ee.Initialize(project='ee-mevans-pridec')
-
-def test_sen2_inds_downloads():
-
-    #replace with test polygon
-    geojson_path = "scratch/csb_orgUnit_dhis.geojson"
+debug=False
+if debug:
+    import json
+    import os
+    from dotenv import load_dotenv
+    load_dotenv()
+    ee.Authenticate()
+    ee.Initialize(project=os.getenv("GEE_PROJECT"))
+    geojson_path = "tests/data/test_polygons.geojson"
     with open(geojson_path, 'r') as f:
-        geojson_data = json.load(f)
+        test_polygons = json.load(f)
 
-    orgUnit = ee.FeatureCollection(geojson_data)
+def test_sen2_inds_downloads(test_polygons, gee_service_account, gee_key):
+
+    credentials = ee.ServiceAccountCredentials(gee_service_account, gee_key)
+    ee.Initialize(credentials)
+
+    orgUnit = ee.FeatureCollection(test_polygons)
 
     date_range = {
-        "start_date_gee":"2024-01-01",
-        "end_date_gee": "2024-02-28"
+        "start_date_gee":"2025-06-01",
+        "end_date_gee": "2025-06-30"
     }
 
-    climate_data = fetch_sen2_indicators(orgUnit, date_range)
+    output = fetch_sen2_indicators(orgUnit, date_range)
 
-    print(climate_data)
-
-test_sen2_inds_downloads()
+    assert output['dataValues'][6]['value'] == -0.6555
