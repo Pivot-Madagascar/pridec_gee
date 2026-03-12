@@ -19,7 +19,7 @@ def import_pridec_climate(
     orgUnit: ee.FeatureCollection = None,
     parent_ou: str = None,
     ou_level: int = None,
-    variables: list[str] = None,
+    variables: list[str] = ["fewsnet","era5", "modis_aod", "modis_fire", "sen2", "sen1_flood"],
     rice_features: ee.FeatureCollection = None,
     dhis_user: str = None,
     dhis_pwd: str = None,

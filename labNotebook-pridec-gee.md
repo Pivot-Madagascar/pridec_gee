@@ -6,6 +6,12 @@
 `pip install -r requirements`: install requirements
 `source .venv/bin/activate`: activate venv
 `pip install -e .`: install editable for during development
+`pytest -vv`: run all pytests in verbose mode
+
+
+## 2026-03-12
+
+Package is nearly ready to publish the first version of. I have updated function documentation, updated package docmuentation, and am now just building out tests. To do is now tracked by the issue tracker on github
 
 ## 2026-03-02
 

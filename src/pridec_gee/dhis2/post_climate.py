@@ -48,6 +48,6 @@ def post_climate(
     headers = {'Authorization': f'ApiToken {token}'} if token else {}
     auth = None if token else HTTPBasicAuth(user, pwd)
     
-    response = requests.post(url, headers=headers, auth=auth, json=payload)
-
+    response = requests.post(url, headers=headers, auth=auth, json=payload, timeout=600)
+    response.raise_for_status()
     return response

@@ -39,16 +39,13 @@ def get_pridec_elements(
         f"&fields=id,code,displayName,description"
         f"&paging=false"
     )
-    resp = requests.get(url, headers=headers, auth=auth)
 
-    if resp.ok:
-         de_info = resp.json().get('dataElements')
-         return de_info
-        #pd.json_normalize(de_info).sort_values(by = 'code') #for nice pandas DataFrame
-    else:
-        print(f"API Connection failed with")
-        print(f"url={url}")
-        print(f"headers={headers}")
-        print(f"auth={auth}")
-        return resp
+
+    response = requests.get(url, headers=headers, auth=auth, timeout=10)
+    response.raise_for_status()
+    
+    de_info = response.json().get('dataElements')
+    #pd.json_normalize(de_info).sort_values(by = 'code') #for nice pandas DataFrame
+    return de_info
+
 

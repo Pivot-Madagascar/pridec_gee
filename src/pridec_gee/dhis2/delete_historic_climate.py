@@ -87,11 +87,13 @@ def delete_historic_climate(
 
 
     #send request
-    response = requests.post(url, headers=headers, auth=auth, json=delete_json)
+
+    response = requests.post(url, headers=headers, auth=auth, json=delete_json, timeout=600)
+    response.raise_for_status()
+    return response
+
 
     # resp.json().get("httpStatus")
     # resp.json().get("status")
     # resp.json().get("message")
     # resp_text = response.json().get("response") #for debugging
-
-    return response
