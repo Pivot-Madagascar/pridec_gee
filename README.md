@@ -1,74 +1,80 @@
-# pridec-gee package
+# pridec-gee 
 
-These python scripts are used to inject PRIDE-C climate variables into a dhis2 instance.
+A python library to extract environmental and climate variables from DHIS2 polygons and optionally import the data into a DHIS2 instance
 
 ## Pre-requisites
 
 ### DHIS2 Instance
 
-Your DHIS2 instance must already have the PRIDE-C metadata structure in place. This includes the creation of the `dataElements` necessary for PRIDE-C to run. More info can be found at this configuration repo: https://gitlab.com/pivot-dev/PRIDE-C/create-dev-dhis2
+Any DHIS2 instance can be used for the extraction of climate variables if it has associated polygons for the orgUnits of interest.
 
-For testing, it is recommended that you use a local instance via `d2` or the PRIDE-C Test instance (does not exist yet as of July 2025). Otherwise it will replace the climate data that we need for production.
+If you would like to import the climate variables into the DHIS2 instance, the PRIDE-C metadata must already be in place. Please see [`docs/pridec-climate-metadata.json`](docs/pridec-climate-metadata.json) for a list of dataElements to create. More info can be found at this [configuration repo](https://gitlab.com/pivot-dev/PRIDE-C/create-dev-dhis2).
 
-You will need to either create a personal access token to access this account or have access to a username/password that can POST PRIDE-C `dataElements`. 
+For testing, it is recommended that you use a local instance via the [DHIS2 CLI](https://developers.dhis2.org/docs/cli/).
+
+You will need to either create a personal access token to access this account or have access to a username/password that can acces the geojson data and POST dataElements. 
 
 ### Google Earth Engine Service Account
 
-This workflow requires an activated GEE servce account, project, and service token. The information for this is stored in `.gee-private-key.json`. Ask Michelle for a copy of this information, or create your own following instructions [here](https://developers.google.com/earth-engine/guides/service_account#use-a-service-account-with-a-private-key).
+This workflow requires an activated GEE service account, project, and service token. The information for this is stored in `.gee-private-key.json`. You can create your account following instructions [here](https://developers.google.com/earth-engine/guides/service_account#use-a-service-account-with-a-private-key).
 
-It can also be authenticated if being run interactively by uncommenting the below lines in `fetch_all_cimate_pridec.py`.
+The GEE account can then either be authenticated via script or interactively:
 
 ```
-ee.Authenticate() #eventaully use token from environment
+#via script
+credentials = ee.ServiceAccountCredentials(GEE_SERVICE_ACCOUNT, ".gee-private-key.json")
+ee.Initialize(credentials)
+
+#interactively
+ee.Authenticate() 
 ee.Initialize(project=os.environ.get("GEE_PROJECT"))
 ```
 
 ### Python 
 
-This requires Python 3.
+This requires Python>=3.12.
+
+## Installation
+
+**via github**
+
+```
+pip install git+https://github.com/Pivot-Madagascar/pridec-gee.git
+```
+**via pyPI**
+
+```
+pip install pridec_gee
+```
 
 ## Usage
 
-1. Clone the repo
+### Create  `.env` file
+
+The library uses several sensitive variables that can be provided via script or `.env` file. An example `.env` file is below:
 
 ```
-git clone https://github.com/Pivot-Madagascar/pridec-gee.git
-```
+DHIS_URL='http://your-dhis-url.com' 
+DHIS_TOKEN='YOUR_DHIS_TOKEN' #or userame and password
+DHIS_USER='your-dhis-username'
+DHIS_PWD='your-dhis-password'
 
-2. Initiate a `venv` in the root folder and install dependencies
-
-```
-python3 -m venv .venv --prompt="pridec-gee"
-source .venv/bin/activate
-pip install -r requirements.txt
-```
-
-3. Create  `.env` file
-
-The `.env` file contains the configurations and tokens needed to run the script. It should have the following format:
-
-```
-DHIS2_PRIDEC_URL ="http://44.218.51.103:8080/" #PRIDE-C URL, can replace with local one
-DHIS2_TOKEN= YOUR_DHIS_TOKEN
-PARENT_OU="VtP4BdCeXIo" #corresponds to Ifanadiana in PRIDE-C PRIDE-C and PIVOT instances
-GEE_PROJECT= YOUR_GEE_PROJECT_NAME
+PARENT_OU='parent-orgunit-uid' #usually an 11 character string from DHIS2, corresponding to parent unit containing orgUnits of interest
+OU_LEVEL='5' # corresponds to orgUnit hierarchy level for which you want to extract variables
+GEE_PROJECT='YOUR_GEE_PROJECT_NAME'
 GEE_SERVICE_ACCOUNT='YOUR_SERVICE_ACCOUNT@YOUR_CLOUD_PROJECT.iam.gserviceaccount.com'
 ```
 
-4. (Opt) Back up sql database on server
+### (Opt) Back up sql database on server
+
+If you are not using a test server, it is recommended to back up the SQL database before importing climate variables.
 
 ```
-sudo -u postgres pg_dump dhis2 | gzip > DATE_pridec_aws.sql.gz
+sudo -u postgres pg_dump dhis2 | gzip > NAME_OF_FILE.sql.gz
 ```
 
-4. Run `fetch_all_climate_pridec.py` file
+### Extract climate vairables
 
-This python file goes through the climate variables one by one to download them from GEE and then POST to a DHIS2 instance. By default, it uses `dryRun` = `True` and will not actually change data on the instance. This can be changed by passing an environment variable directly to the `python` call:
+Individual climate variables can be extracted using the `fetch_*` functions by providing a `FeatureCollection` of the orgUnits and a dateRange to extract.  An example python script using the DHIS2 play instance is in [`docs/example.py`](docs/example.py).
 
-```
-source .venv/bin/activate
-export DRYRUN="False" && python fetch_all_climate_pridec.py
-```
-
-It can also be added to your `.env` file, but we recommend explicitly specifying it to protect production instances.
-
+The `import_pridec_climate` function runs the full PRIDE-C climate variable extraction and importation process if your DHIS2 instance contains the appropriate metadata structure.

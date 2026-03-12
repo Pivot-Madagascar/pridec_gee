@@ -1,16 +1,20 @@
 [build-system]
 build-backend = "uv_build"
-requires = ["uv_build>=0.10.7,<0.11.0"]
+requires = ["uv_build>=0.10.7"]
 
 [project]
 name = 'pridec_gee'
-version = '0.1.0'
+version = '1.0.0.dev1'
 requires-python = ">=3.12"
 description = "Import environmental data from Google Earth Engine into DHIS2 instances"
 readme = "README.md"
+license = "GPL-3.0-or-later"
 authors = [
-    {email = "pridec@pivotworks.org"},
-    {name = "PRIDE-C Project"}
+    {name = "PRIDE-C Project", email = "pridec@pivotworks.org"},
+    {name = "Michelle Evans", email = "mv.evans.phd@gmail.com"}
+]
+maintainers = [
+    {name = "Michelle Evans", email = "mv.evans.phd@gmail.com"}
 ]
 dependencies = [
     "dotenv>=0.9.9",
@@ -22,6 +26,9 @@ dependencies = [
     "requests>=2.32.5",
     "setuptools>=82.0.0",
 ]
+
+[project.urls]
+Repository = "https://github.com/Pivot-Madagascar/pridec_gee"
 
 [tool.setuptools.package-data]
 pridec_gee = ["data/*"]

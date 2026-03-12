@@ -1,0 +1,114 @@
+{
+    "dataElements": [
+        {
+        "code": "pridec_climate_precipitation",
+        "name": "PRIDEC : CLIMATE Total Precipitation",
+        "shortName": "pridec_climate_precipitation",
+        "aggregationType": "AVERAGE",
+        "domainType": "AGGREGATE",
+        "valueType": "NUMBER",
+        "zeroIsSignificant": "TRUE",
+        "categoryCombo_code": ""
+    },
+    {
+        "code": "pridec_climate_temperatureMean",
+        "name": "PRIDEC : CLIMATE Mean Temperature",
+        "shortName": "pridec_climate_temperatureMean",
+        "aggregationType": "AVERAGE",
+        "domainType": "AGGREGATE",
+        "valueType": "NUMBER",
+        "zeroIsSignificant": "TRUE",
+        "categoryCombo_code": ""
+    },
+    {
+        "code": "pridec_climate_evi",
+        "name": "PRIDEC : CLIMATE Vegetation Index",
+        "shortName": "pridec_climate_evi",
+        "aggregationType": "AVERAGE",
+        "domainType": "AGGREGATE",
+        "valueType": "NUMBER",
+        "zeroIsSignificant": "TRUE",
+        "categoryCombo_code": ""
+    },
+    {
+        "code": "pridec_climate_mndwi",
+        "name": "PRIDEC : CLIMATE Surface Water Index (MNDWI)",
+        "shortName": "pridec_climate_mndwi",
+        "aggregationType": "AVERAGE",
+        "domainType": "AGGREGATE",
+        "valueType": "NUMBER",
+        "zeroIsSignificant": "TRUE",
+        "categoryCombo_code": ""
+    },
+    {
+        "code": "pridec_climate_gao",
+        "name": "PRIDEC : CLIMATE Vegetation Humidity Index (GAO)",
+        "shortName": "pridec_climate_gao",
+        "aggregationType": "AVERAGE",
+        "domainType": "AGGREGATE",
+        "valueType": "NUMBER",
+        "zeroIsSignificant": "TRUE",
+        "categoryCombo_code": ""
+    },
+    {
+        "code": "pridec_climate_propFire",
+        "name": "PRIDEC : CLIMATE Bushfire Area",
+        "shortName": "pridec_climate_propFire",
+        "aggregationType": "AVERAGE",
+        "domainType": "AGGREGATE",
+        "valueType": "NUMBER",
+        "zeroIsSignificant": "TRUE",
+        "categoryCombo_code": ""
+    },
+    {
+        "code": "pridec_climate_NO2",
+        "name": "PRIDEC : CLIMATE Atmospheric NO2",
+        "shortName": "pridec_climate_NO2",
+        "aggregationType": "AVERAGE",
+        "domainType": "AGGREGATE",
+        "valueType": "NUMBER",
+        "zeroIsSignificant": "TRUE",
+        "categoryCombo_code": ""
+    },
+    {
+        "code": "pridec_climate_AOD",
+        "name": "PRIDEC : CLIMATE Atmospheric AOD",
+        "shortName": "pridec_climate_AOD",
+        "aggregationType": "AVERAGE",
+        "domainType": "AGGREGATE",
+        "valueType": "NUMBER",
+        "zeroIsSignificant": "TRUE",
+        "categoryCombo_code": ""
+    },
+    {
+        "code": "pridec_climate_floodedRice",
+        "name": "PRIDEC : CLIMATE Flooded Rice Fields",
+        "shortName": "pridec_climate_floodedRice",
+        "aggregationType": "AVERAGE",
+        "domainType": "AGGREGATE",
+        "valueType": "NUMBER",
+        "zeroIsSignificant": "TRUE",
+        "categoryCombo_code": ""
+    },
+    {
+        "code": "pridec_climate_relHumidity",
+        "name": "PRIDEC : CLIMATE Relative Humidity",
+        "shortName": "pridec_climate_relHumidity",
+        "aggregationType": "AVERAGE",
+        "domainType": "AGGREGATE",
+        "valueType": "NUMBER",
+        "zeroIsSignificant": "TRUE",
+        "categoryCombo_code": ""
+    },
+    {
+        "code": "pridec_climate_windspeed",
+        "name": "PRIDEC : CLIMATE Windspeed",
+        "shortName": "pridec_climate_windspeed",
+        "aggregationType": "AVERAGE",
+        "domainType": "AGGREGATE",
+        "valueType": "NUMBER",
+        "zeroIsSignificant": "TRUE",
+        "categoryCombo_code": ""
+    }
+    ]
+}
