@@ -2,6 +2,17 @@ import ee
 
 from pridec_gee import fetch_era5_climate
 
+debug=False
+if debug:
+    import json
+    import os
+    from dotenv import load_dotenv
+    load_dotenv()
+    ee.Authenticate()
+    ee.Initialize(project=os.getenv("GEE_PROJECT"))
+    geojson_path = "test/data/test_polygons.geojson"
+    with open(geojson_path, 'r') as f:
+        test_polygons = json.load(f)
 
 def test_era5_climate_downloads(test_polygons, gee_service_account, gee_key):
 

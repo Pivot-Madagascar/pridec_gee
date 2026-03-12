@@ -8,7 +8,7 @@ if debug:
     dhis_url = os.environ.get("DHIS_URL")
     dhis_token = os.getenv("DHIS_TOKEN")
 
-def test_delete_historic_climate_connects(dhis_url, dhis_token):
+def test_delete_historic_climate_connects(dhis_url, dhis_token, api_connection):
     
     resp = delete_historic_climate(base_url=dhis_url,
                             token=dhis_token,

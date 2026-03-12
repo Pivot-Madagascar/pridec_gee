@@ -9,7 +9,7 @@ if debug:
     load_dotenv()
     ee.Authenticate()
     ee.Initialize(project=os.getenv("GEE_PROJECT"))
-    geojson_path = "tests/data/test_polygons.geojson"
+    geojson_path = "test/data/test_polygons.geojson"
     with open(geojson_path, 'r') as f:
         test_polygons = json.load(f)
 

@@ -2,10 +2,23 @@ import os
 from pathlib import Path
 import json
 from dotenv import load_dotenv
+import requests
 
 load_dotenv()
 
 import pytest
+
+@pytest.fixture(scope="session")
+def api_connection():
+    url = f"{os.getenv("DHIS_URL").rstrip('/')}/api/system/info"
+    token = os.getenv("DHIS_TOKEN")
+    headers = {'Authorization': f'ApiToken {token}'} 
+
+    try:
+        r = requests.get(url, headers=headers, timeout=5)
+        r.raise_for_status()
+    except requests.RequestException as e:
+        pytest.skip(f"API not reachable: {e}")
 
 @pytest.fixture(scope="session")
 def dhis_token():
@@ -44,14 +57,14 @@ def gee_key():
 
 @pytest.fixture
 def test_polygons():
-    geojson_path = "tests/data/test_polygons.geojson"
+    geojson_path = "test/data/test_polygons.geojson"
     with open(geojson_path, 'r') as f:
         geojson_data = json.load(f)
     return geojson_data
 
 @pytest.fixture
 def test_ricefields():
-    geojson_path = "tests/data/rice_subset.geojson"
+    geojson_path = "test/data/rice_subset.geojson"
     with open(geojson_path, 'r') as f:
         geojson_data = json.load(f)
     return geojson_data

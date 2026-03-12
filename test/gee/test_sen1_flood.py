@@ -10,7 +10,7 @@ if debug:
     load_dotenv()
     ee.Authenticate()
     ee.Initialize(project=os.getenv("GEE_PROJECT"))
-    geojson_path = "tests/data/rice_subset.geojson"
+    geojson_path = "test/data/rice_subset.geojson"
     with open(geojson_path, 'r') as f:
         test_ricefields = json.load(f)
 
