@@ -31,4 +31,4 @@ jobs:
         run: uv run coverage run -m pytest -v -s
 
       - name: Coverage report
-        uses: uv run coverage report -m
+        run: uv run coverage report -m
