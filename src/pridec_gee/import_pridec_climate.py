@@ -32,7 +32,7 @@ def import_pridec_climate(
     Args:
         dhis_url: URL of the DHIS2 instance.
         date_range: Dictionary with keys 'start_date_gee' and 'end_date_gee'
-            representing the date range to download.
+            representing the date range to download. Date format is YYYY-MM-DD
         orgUnit: FeatureCollection of orgUnits to download (optional).
         parent_ou: UID of parent orgUnit for GeoJSON download (optional).
         ou_level: Hierarchical level of orgUnit to extract for (optional).

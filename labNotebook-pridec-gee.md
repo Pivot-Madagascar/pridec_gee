@@ -8,10 +8,39 @@
 `pip install -e .`: install editable for during development
 `pytest -vv`: run all pytests in verbose mode
 
+## To Publish via GH Actions
+
+```
+#PR into main branch
+
+# update version in toml
+git add pyproject.toml
+git commit -m "update version to X.X.X"
+git push
+
+git tag vX.X.X
+git push origin vX.X.X
+
+```
+
+
+## 2026-04-20
+
+Getting pytests working if I can. Added coverage checker and github actions. 
+
+The github actions will run the tests on any PR to the main branch. I also created something for automatic publishing to PyPI and for github releases. I just need to do a quick test to be sure it works.
+
+**TO DO:**
+- publish v1.0.0
 
 ## 2026-03-12
 
-Package is nearly ready to publish the first version of. I have updated function documentation, updated package docmuentation, and am now just building out tests. To do is now tracked by the issue tracker on github
+Package is nearly ready to publish the first version of. I have updated function documentation, updated package docmuentation, and am now just building out tests. To do is now tracked by the issue tracker on github.
+
+**TO DO:**
+- run pytests
+- check uv
+- publish on PyPI
 
 ## 2026-03-02
 
