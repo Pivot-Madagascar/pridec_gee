@@ -19,7 +19,6 @@ maintainers = [
 dependencies = [
     "dotenv>=0.9.9",
     "earthengine-api>=1.7.15",
-    "ee>=0.2",
     "numpy>=2.4.2",
     "pandas>=3.0.1",
     "pytest>=9.0.3",

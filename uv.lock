@@ -14,18 +14,6 @@ resolution-markers = [
 ]
 
 [[package]]
-name = "blessings"
-version = "1.7"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "six" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/5c/f8/9f5e69a63a9243448350b44c87fae74588aa634979e6c0c501f26a4f6df7/blessings-1.7.tar.gz", hash = "sha256:98e5854d805f50a5b58ac2333411b0482516a8210f23f43308baeb58d77c157d", size = 28194, upload-time = "2018-06-21T14:00:25.518Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/03/74/489f85a78247609c6b4f13733cbf3ba0d864b11aa565617b645d6fdf2a4a/blessings-1.7-py3-none-any.whl", hash = "sha256:b1fdd7e7a675295630f9ae71527a8ebc10bfefa236b3d6aa4932ee4462c17ba3", size = 18460, upload-time = "2018-06-21T14:00:24.412Z" },
-]
-
-[[package]]
 name = "certifi"
 version = "2026.2.25"
 source = { registry = "https://pypi.org/simple" }
@@ -321,15 +309,6 @@ sdist = { url = "https://files.pythonhosted.org/packages/33/b6/02cee23f96f5f751a
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ea/e5/37893457baa12d06522c50af78804179521cf5e665de2e46e8d166e13e0b/earthengine_api-1.7.15-py3-none-any.whl", hash = "sha256:e09ac9c04d1ca019487e6cc312d437ec51ff6d2b7abb857dbf73ebb4c5632d05", size = 477082, upload-time = "2026-02-23T20:55:49.466Z" },
 ]
-
-[[package]]
-name = "ee"
-version = "0.2"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "blessings" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/1e/85/c84cb4e02eeec6be1be045bc9b6c16ed964cb0c614abd3f0eee127f1b2be/ee-0.2.tar.gz", hash = "sha256:3f1bc017e8eb293425e7378a865c2b24cef67166f6929bd2289ea9413d0a7c65", size = 3038, upload-time = "2014-02-21T03:23:18.837Z" }
 
 [[package]]
 name = "google-api-core"
@@ -635,7 +614,6 @@ source = { editable = "." }
 dependencies = [
     { name = "dotenv" },
     { name = "earthengine-api" },
-    { name = "ee" },
     { name = "numpy" },
     { name = "pandas" },
     { name = "pytest" },
@@ -654,7 +632,6 @@ dev = [
 requires-dist = [
     { name = "dotenv", specifier = ">=0.9.9" },
     { name = "earthengine-api", specifier = ">=1.7.15" },
-    { name = "ee", specifier = ">=0.2" },
     { name = "numpy", specifier = ">=2.4.2" },
     { name = "pandas", specifier = ">=3.0.1" },
     { name = "pytest", specifier = ">=9.0.3" },
