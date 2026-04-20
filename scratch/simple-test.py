@@ -3,7 +3,6 @@
 
 import ee
 import pandas as pd
-import geemap
 
 ee.Authenticate()
 
@@ -100,7 +99,6 @@ print(len(results_data))   # Check how many features we have
 properties_data = [feature['properties'] for feature in results_data]
 
 # Convert to DataFrame
-import pandas as pd
 df = pd.DataFrame(properties_data)
 
 # Print the first few rows to check

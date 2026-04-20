@@ -3,7 +3,6 @@ from requests.auth import HTTPBasicAuth
 import pandas as pd
 from datetime import datetime
 
-from dateutil.relativedelta import relativedelta
 
 def delete_historic_climate(
     base_url: str,

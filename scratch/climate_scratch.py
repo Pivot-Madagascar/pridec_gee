@@ -4,15 +4,11 @@
 
 import ee
 import pandas as pd
-import geemap
-import json
-import requests
-from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 
 from utils.get_dhis_geojson import get_dhis_geojson
-from utils.gee_utils import zonal_stats, month_agg_sp_mean
+from utils.gee_utils import month_agg_sp_mean
 from utils.get_date_range import get_date_range
 import os
 

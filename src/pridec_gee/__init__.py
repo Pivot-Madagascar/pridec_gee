@@ -1,5 +1,4 @@
 import logging
-package_logger = logging.getLogger(__name__)
 
 from .gee.calc_date_range import calc_date_range
 from .gee.fetch_era5_climate import fetch_era5_climate
@@ -15,3 +14,20 @@ from .dhis2.delete_historic_climate import delete_historic_climate
 from .dhis2.post_climate import post_climate
 
 from .import_pridec_climate import import_pridec_climate
+
+__all__ = [
+    "calc_date_range",
+    "fetch_era5_climate",
+    "fetch_fewsnet_windspeed",
+    "fetch_modis_aod",
+    "fetch_modis_fire",
+    "fetch_sen2_indicators",
+    "fetch_sen1_flood",
+    "get_pridec_elements",
+    "get_dhis_geojson",
+    "delete_historic_climate",
+    "post_climate",
+    "import_pridec_climate"
+    ]
+
+package_logger = logging.getLogger(__name__)

@@ -1,8 +1,5 @@
 import ee
-import datetime
 import logging
-
-logger = logging.getLogger(__name__)
 
 from .gee.fetch_fewsnet_windspeed import fetch_fewsnet_windspeed
 from .gee.fetch_era5_climate import fetch_era5_climate
@@ -12,6 +9,8 @@ from .gee.fetch_sen1_flood import fetch_sen1_flood
 from .gee.fetch_sen2_indicators import fetch_sen2_indicators
 from .dhis2.get_dhis_geojson import get_dhis_geojson
 from .dhis2.post_climate import post_climate
+
+logger = logging.getLogger(__name__)
 
 def import_pridec_climate(
     dhis_url: str,
