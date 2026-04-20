@@ -7,7 +7,6 @@ Authors: Adopted from Hird et al. 2017 Remote Sensing (supplementary material): 
 Description: This script applied additional border noise correction
 """
 
-import ee
 from . import helper
 
 # ---------------------------------------------------------------------------//

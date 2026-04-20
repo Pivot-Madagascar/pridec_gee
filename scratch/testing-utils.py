@@ -3,7 +3,6 @@
 
 import ee
 import pandas as pd
-import geemap
 import json
 from utils import zonal_stats, month_agg_sp_mean
 

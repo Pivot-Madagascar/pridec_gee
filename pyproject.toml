@@ -4,7 +4,7 @@ requires = ["uv_build>=0.10.7"]
 
 [project]
 name = 'pridec_gee'
-version = '1.0.0.dev1'
+version = '1.0.0'
 requires-python = ">=3.12"
 description = "Import environmental data from Google Earth Engine into DHIS2 instances"
 readme = "README.md"
@@ -19,9 +19,10 @@ maintainers = [
 dependencies = [
     "dotenv>=0.9.9",
     "earthengine-api>=1.7.15",
-    "ee>=0.2",
     "numpy>=2.4.2",
     "pandas>=3.0.1",
+    "pytest>=9.0.3",
+    "pytest-cov>=7.1.0",
     "python-dateutil>=2.9.0.post0",
     "requests>=2.32.5",
     "setuptools>=82.0.0",
@@ -32,3 +33,20 @@ Repository = "https://github.com/Pivot-Madagascar/pridec_gee"
 
 [tool.setuptools.package-data]
 pridec_gee = ["data/*"]
+
+[tool.coverage.run]
+omit = [
+    "src/pridec_gee/gee/s1_ard/*"
+]
+
+[tool.ruff]
+exclude=[
+    "scratch",
+    "data",
+    "labNotebook-pridec-gee.md"
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.15.11",
+]

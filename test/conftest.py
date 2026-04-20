@@ -3,10 +3,11 @@ from pathlib import Path
 import json
 from dotenv import load_dotenv
 import requests
+import pytest
 
 load_dotenv()
 
-import pytest
+
 
 @pytest.fixture(scope="session")
 def api_connection():
