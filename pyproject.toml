@@ -22,6 +22,8 @@ dependencies = [
     "ee>=0.2",
     "numpy>=2.4.2",
     "pandas>=3.0.1",
+    "pytest>=9.0.3",
+    "pytest-cov>=7.1.0",
     "python-dateutil>=2.9.0.post0",
     "requests>=2.32.5",
     "setuptools>=82.0.0",
@@ -36,4 +38,16 @@ pridec_gee = ["data/*"]
 [tool.coverage.run]
 omit = [
     "src/pridec_gee/gee/s1_ard/*"
+]
+
+[tool.ruff]
+exclude=[
+    "scratch",
+    "data",
+    "labNotebook-pridec-gee.md"
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.15.11",
 ]

@@ -7,6 +7,8 @@
 `source .venv/bin/activate`: activate venv
 `pip install -e .`: install editable for during development
 `pytest -vv`: run all pytests in verbose mode
+`uv run coverage run -m pytest -v`: pytest via uv
+`uv run ruff check`: code formatting
 
 ## To Publish via GH Actions
 
@@ -28,7 +30,7 @@ git push origin vX.X.X
 
 Getting pytests working if I can. Added coverage checker and github actions. 
 
-The github actions will run the tests on any PR to the main branch. I also created something for automatic publishing to PyPI and for github releases. I just need to do a quick test to be sure it works.
+The github actions will run the tests on any PR to the main branch. I also created something for automatic publishing to PyPI and for github releases. I just need to do a quick test to be sure it works. Created a seperate branch to test the PR workflow.
 
 **TO DO:**
 - publish v1.0.0
