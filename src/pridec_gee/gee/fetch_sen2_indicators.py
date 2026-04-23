@@ -2,11 +2,14 @@ import ee
 import pandas as pd
 from numpy import nan as np_nan
 
-from .utils import month_agg_sp_mean, mask_s2_clouds, add_evi, add_gao, add_mndwi
+from .utils import month_agg_sp_mean, mask_s2_clouds, add_evi, add_gao, add_mndwi, validate_variables
+
+SEN2_VARIABLES = ['pridec_climate_evi', 'pridec_climate_gao', 'pridec_climate_mndwi']
 
 def fetch_sen2_indicators(
     orgUnit: ee.FeatureCollection,
     date_range: dict[str, str],
+    variables: list[str] = SEN2_VARIABLES
 ):
     """Extract EVI, MNDWI, and NDWI-GAO at monthly frequency from Sentinel-2 data.
 
@@ -19,6 +22,8 @@ def fetch_sen2_indicators(
         date_range: Dictionary containing start and end dates with keys:
             - 'start_date_gee': start date as YYYY-MM-DD
             - 'end_date_gee': end date as YYYY-MM-DD
+        variables: variables to be extracted, based on DHIS2 code 
+            Options: ['pridec_climate_evi', 'pridec_climate_gao', 'pridec_climate_mndwi']. Default is all.
 
     Returns:
         list of dict: Each dict represents a Sentinel-2 measurement with fields:
@@ -27,6 +32,8 @@ def fetch_sen2_indicators(
             - 'value': measured index (EVI, MNDWI, NDWI-GAO)
             - 'dataElement': corresponding DHIS2 data element code
     """
+
+    validate_variables(input_vars = variables, allowed_vars= SEN2_VARIABLES)
 
     date_seq = pd.date_range(start = pd.to_datetime(date_range['start_date_gee']), 
                              end = pd.to_datetime(date_range['end_date_gee']), freq = 'MS')
@@ -67,6 +74,9 @@ def fetch_sen2_indicators(
     df_long = df_long.dropna(subset=['value'])
     df_long['value'] = df_long['value'].round(4)
     df_long['period'] = df_long['period'].astype(str)
+
+    #subset based on variable selection
+    df_long = df_long[df_long['dataElement'].isin(variables)]
 
     #turn into a json file
     df_dict = {

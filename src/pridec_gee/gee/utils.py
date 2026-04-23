@@ -237,4 +237,13 @@ def add_dewtempC(image):
 
     return image.addBands(dewtemp_c)
 
+#validate provided variables
+def validate_variables(input_vars, allowed_vars):
+    invalid = set(input_vars) - set(allowed_vars)
+    if invalid:
+        raise ValueError(
+            f"Invalid variables specified: {sorted(invalid)}"
+            f"Allowed variables: {sorted(allowed_vars)}"
+        )
+
 

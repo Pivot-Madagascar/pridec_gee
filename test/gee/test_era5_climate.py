@@ -1,4 +1,5 @@
 import ee
+import pytest
 
 from pridec_gee import fetch_era5_climate
 
@@ -27,6 +28,21 @@ def test_era5_climate_downloads(test_polygons, gee_service_account, gee_key):
         "end_date_gee": "2025-01-30"
     }
 
-    output = fetch_era5_climate(orgUnit, date_range)
+    output = fetch_era5_climate(orgUnit, date_range, variables = ["pridec_climate_temperatureMean"])
 
-    assert output['dataValues'][6]['value'] == 25.3665
+    assert output['dataValues'][2]['value'] == 23.8703
+    assert all(item["dataElement"] == "pridec_climate_temperatureMean" for item in output['dataValues'])
+
+def test_era5_climate_variableSelection(test_polygons, gee_service_account, gee_key):
+        #initialize 
+    credentials = ee.ServiceAccountCredentials(gee_service_account, gee_key)
+    ee.Initialize(credentials)
+
+    orgUnit = ee.FeatureCollection(test_polygons)
+
+    date_range = {
+        "start_date_gee":"2025-01-01",
+        "end_date_gee": "2025-01-30"
+    }
+    with pytest.raises(ValueError, match="Invalid variable"):
+        fetch_era5_climate(orgUnit, date_range, variables = ["wrong_variable"])

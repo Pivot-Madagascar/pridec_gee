@@ -26,11 +26,24 @@ git push origin vX.X.X
 ```
 
 
+## 2026-04-23
+
+Turned off the GHA becuase it was using a lot of minutes and wasn't really necessary for publishing. Using versions and releases manually now.
+
+Working on things corresponding to [issue #6](https://github.com/Pivot-Madagascar/pridec_gee/issues/6), specifically being able to select variables in the importation step and fetch steps.
+
+**TO DO**:
+- add variables to individual fetch functions
+- add variables to import_ function
+- write seperate fetch function to do multiple at once
+
 ## 2026-04-20
 
 Getting pytests working if I can. Added coverage checker and github actions. 
 
 The github actions will run the tests on any PR to the main branch. I also created something for automatic publishing to PyPI and for github releases. I just need to do a quick test to be sure it works. Created a seperate branch to test the PR workflow.
+
+Everythign works but I need to add a PAT that allows for posting releases for the github action to work I think: https://docs.github.com/en/rest/releases/releases?apiVersion=2026-03-10#create-a-release
 
 **TO DO:**
 - publish v1.0.0
