@@ -6,7 +6,7 @@
 `pip install -r requirements`: install requirements
 `source .venv/bin/activate`: activate venv
 `pip install -e .`: install editable for during development
-`pytest -vv`: run all pytests in verbose mode
+`pytest path/to/file -vv`: run all pytests in verbose mode
 `uv run coverage run -m pytest -v`: pytest via uv
 `uv run ruff check`: code formatting
 
