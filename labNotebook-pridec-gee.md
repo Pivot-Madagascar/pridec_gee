@@ -35,9 +35,13 @@ NEW WORKFLOW: fetch_* functions return a pandas dataFrame. This is then turned i
 
 I have created a function `fetch_climate_gee` that I now just need to link into the import function. Soemthign isn't working quite in the testing of it for the proportionFire but I'm not super sure why, it may just be due to dataquality, but I thought it all got filled in kind of automatically. The test works now, just needed to reload the package.
 
+Updated import_pridec_climate to also use this workflow. Hopefully this helps reduce duplication a bit.
+
+Updated example document to show how to fetch variables
+
 **TO DO:**
 - ~~test fetch_climate_gee~~
-- update import_pridec_climate to use fetch_climate_gee. Update tests too
+- ~~update import_pridec_climate to use fetch_climate_gee. Update tests too~~
 
 
 ## 2026-04-23
