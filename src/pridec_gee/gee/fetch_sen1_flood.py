@@ -27,11 +27,15 @@ def fetch_sen1_flood(
         test_run: If True, performs a test using only a small subset of images (default True).
 
     Returns:
-        list of dict: Each dict represents a flooding observation with fields:
-            - 'orgUnit': organisation unit ID
+        pandas dataframe with columns:
+            - 'orgUnit': organization unit ID
             - 'period': period of observation (YYYYMM)
-            - 'value': proportion of flooded ricefield
-            - 'dataElement': corresponding DHIS2 data element code
+            - 'value': climate value (e.g., temperature, precipitation)
+            - 'dataElement': corresponding DHIS2 data element code (pridec_climate_*)
+        Can be turned into a DHIS2 formatted json file with:
+                df_dict = {
+                    "dataValues": df_long.to_dict(orient="records")
+                }
     """
 
     geom = rice_features
@@ -153,9 +157,6 @@ def fetch_sen1_flood(
     df_long['period'] = df_long['period'].astype(str)
     df_long["value"] = pd.to_numeric(df_long["value"], errors='coerce')
 
-        #turn into a json file
-    df_dict = {
-        "dataValues": df_long.to_dict(orient="records")
-    }
+    df_long = df_long.reset_index(drop=True)
 
-    return df_dict
+    return df_long

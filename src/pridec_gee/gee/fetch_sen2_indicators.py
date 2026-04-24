@@ -25,12 +25,16 @@ def fetch_sen2_indicators(
         variables: variables to be extracted, based on DHIS2 code 
             Options: ['pridec_climate_evi', 'pridec_climate_gao', 'pridec_climate_mndwi']. Default is all.
 
-    Returns:
-        list of dict: Each dict represents a Sentinel-2 measurement with fields:
-            - 'orgUnit': organisation unit ID
+    Returns: 
+        pandas dataframe with columns:
+            - 'orgUnit': organization unit ID
             - 'period': period of observation (YYYYMM)
-            - 'value': measured index (EVI, MNDWI, NDWI-GAO)
-            - 'dataElement': corresponding DHIS2 data element code
+            - 'value': climate value (e.g., temperature, precipitation)
+            - 'dataElement': corresponding DHIS2 data element code (pridec_climate_*)
+        Can be turned into a DHIS2 formatted json file with:
+                df_dict = {
+                    "dataValues": df_long.to_dict(orient="records")
+                }
     """
 
     validate_variables(input_vars = variables, allowed_vars= SEN2_VARIABLES)
@@ -77,10 +81,6 @@ def fetch_sen2_indicators(
 
     #subset based on variable selection
     df_long = df_long[df_long['dataElement'].isin(variables)]
+    df_long = df_long.reset_index(drop=True)
 
-    #turn into a json file
-    df_dict = {
-        "dataValues": df_long.to_dict(orient="records")
-    }
-
-    return df_dict
+    return df_long

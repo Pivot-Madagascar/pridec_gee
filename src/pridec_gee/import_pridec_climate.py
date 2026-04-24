@@ -11,6 +11,7 @@ from .dhis2.get_dhis_geojson import get_dhis_geojson
 from .dhis2.post_climate import post_climate
 from .gee.variables import AVAILABLE_VARIABLES, FEWSNET_VARIABLES, SEN2_VARIABLES, ERA5_VARIABLES
 from .gee.utils import validate_variables
+from .fetch_climate_gee import fetch_climate_gee
 
 logger = logging.getLogger(__name__)
 
@@ -38,17 +39,21 @@ def import_pridec_climate(
         parent_ou: UID of parent orgUnit for GeoJSON download (optional).
         ou_level: Hierarchical level of orgUnit to extract for (optional).
         variables: List of variables to import. See ``AVAILABLE VARIABLES`` for full list. Defaults to all
-        rice_features: FeatureCollection of rice fields if importing `sen1_flood` data.
+        rice_features: FeatureCollection of rice fields if importing `pridec_climate_floodedRice` data.
         dhis_user: Username for DHIS2 instance (optional).
         dhis_pwd: Password for DHIS2 instance (optional).
         dhis_token: Personal access token for DHIS2. Can be used instead of `dhis_user`/`dhis_pwd`.
-        dryRun: If True, performs a dry run without posting data and using only 5 `sen1_flood` images. Defaults to True.
+        dryRun: If True, performs a dry run without posting data. Defaults to True.
 
     Returns:
-        requests.Response: Response object from POST requests
+        requests.Response: Response object from POST request
     """
 
     validate_variables(input_vars = variables, allowed_vars = AVAILABLE_VARIABLES)
+    if "pridec_climate_floodedRice" in variables:
+        if rice_features is None:
+            logger.error("Argument ``rice_features`` must be provided to import Sen-1 Ricefield flooding dynamics")
+            return
 
     logger.info("Updating PRIDEC Climate variables for URL %s",
                 dhis_url)
@@ -64,89 +69,25 @@ def import_pridec_climate(
                                     dhis_token=dhis_token, dhis_user=dhis_user, dhis_pwd=dhis_pwd, dhis_url=dhis_url)
         orgUnit = ee.FeatureCollection(org_units)
 
-    if set(FEWSNET_VARIABLES) & set(variables):
-        logger.info("Importing FEWSNET variables: %s", set(FEWSNET_VARIABLES) & set(variables))
-        fewsnet_json = fetch_fewsnet_windspeed(orgUnit, date_range)
-        resp = post_climate(base_url = dhis_url, payload = fewsnet_json, 
-                            token = dhis_token, user = dhis_user, pwd = dhis_pwd,
-                            dryRun = dryRun)
-        if resp.ok:
-            logger.info("Imported: %s", set(FEWSNET_VARIABLES) & set(variables))
-            logger.debug("Response: %s", resp.text)
-        else:
-            logger.error("Failed Import: %s", set(FEWSNET_VARIABLES) & set(variables))
-            logger.error("Response: %s", resp.text)
-    if set(ERA5_VARIABLES) & set(variables):
-        logger.info("Importing ERA5 climate variables: %s", set(ERA5_VARIABLES) & set(variables))
-        era5_json = fetch_era5_climate(orgUnit, date_range)
-        resp = post_climate(base_url = dhis_url, payload = era5_json, 
-                            token = dhis_token, user = dhis_user, pwd = dhis_pwd,
-                            dryRun = dryRun)
-        if resp.ok:
-            logger.info("Imported: %s", set(ERA5_VARIABLES) & set(variables))
-            logger.debug("Response: %s", resp.text)
-        else:
-            logger.error("Failed Import: %s", set(ERA5_VARIABLES) & set(variables))
-            logger.error("Response: %s", resp.text)
-
-    if "pridec_climate_AOD" in variables:
-        logger.info("Importing pridec_climate_AOD")
-        aod_json = fetch_modis_aod(orgUnit, date_range)
-        resp = post_climate(base_url = dhis_url, payload = aod_json, 
-                            token = dhis_token, user = dhis_user, pwd = dhis_pwd,
-                            dryRun = dryRun)
-        if resp.ok:
-            logger.info("Imported: pridec_climate_AOD")
-            logger.debug("Response: %s", resp.text)
-        else:
-            logger.error("Failed Import: pridec_climate_AOD")
-            logger.error("Response: %s", resp.text)
+    climate_df = fetch_climate_gee(date_range = date_range,
+                                   orgUnit = orgUnit,
+                                   variables = variables,
+                                   rice_features =  rice_features)
     
-    if "pridec_climate_fireProp" in variables:
-        logger.info("Importing pridec_climate_fireProp")
-
-        fire_json = fetch_modis_fire(orgUnit, date_range)
-        resp = post_climate(base_url = dhis_url, payload = fire_json, 
-                            token = dhis_token, user = dhis_user, pwd = dhis_pwd,
-                            dryRun = dryRun)
-        if resp.ok:
-            logger.info("Imported: pridec_climate_fireProp")
-            logger.debug("Response: %s", resp.text)
-        else:
-            logger.error("Failed Import: pridec_climate_fireProp")
-            logger.error("Response: %s", resp.text)
-
+    climate_json = {
+                    "dataValues": climate_df.to_dict(orient="records")
+                }
     
+    logger.info("Posting climate data to DHIS2 instance %s with dryRun=%s", dhis_url, dryRun)
 
-    if set(SEN2_VARIABLES) & set(variables):
-        logger.info("Importing Sen2 Vegetation Indicators: %s", set(SEN2_VARIABLES) & set(variables))
-        sen2_json = fetch_sen2_indicators(orgUnit, date_range)
-        resp = post_climate(base_url = dhis_url, payload = sen2_json, 
+    resp = post_climate(base_url = dhis_url, payload = climate_json, 
                             token = dhis_token, user = dhis_user, pwd = dhis_pwd,
                             dryRun = dryRun)
-        if resp.ok:
-            logger.info("Imported: %s", set(SEN2_VARIABLES) & set(variables))
-            logger.debug("Response: %s", resp.text)
-        else:
-            logger.error("Failed Import: %s", set(SEN2_VARIABLES) & set(variables))
-            logger.error("Response: %s", resp.text)
-    
-    if "pridec_climate_floodedRice" in variables:
-        if rice_features is None:
-            logger.error("Argument rice_features must be provided to import Sen-1 Ricefield flooding dynamics")
-            return
-        
-        logger.info("Importing pridec_climate_floodedRice. This can take 30-45 minutes if not in dryRun mode. Currently running with dryRun = %s", dryRun)
-
-        flood_json = fetch_sen1_flood(rice_features, date_range, dryRun)
-        resp = post_climate(base_url = dhis_url, payload = flood_json, 
-                            token = dhis_token, user = dhis_user, pwd = dhis_pwd,
-                            dryRun = dryRun)
-        if resp.ok:
-            logger.info("Imported: pridec_climate_floodedRice")
-            logger.debug("Response: %s", resp.text)
-        else:
-            logger.error("Failed Import: pridec_climate_floodedRice")
-            logger.error("Response: %s", resp.text)
+    if resp.ok:
+        logger.info("Sucessfully imported climate variables: %s", variables)
+        logger.debug("Response: %s", resp.text)
+    else:
+        logger.error("Failed Import: %s", variables)
+        logger.error("Response: %s", resp.text)
         
     return

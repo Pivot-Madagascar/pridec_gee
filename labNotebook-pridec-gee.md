@@ -10,11 +10,10 @@
 `uv run coverage run -m pytest -v`: pytest via uv
 `uv run ruff check`: code formatting
 
-## To Publish via GH Actions
+## To Publish a release
 
 ```
 #PR into main branch
-
 # update version in toml
 git add pyproject.toml
 git commit -m "update version to X.X.X"
@@ -22,8 +21,23 @@ git push
 
 git tag vX.X.X
 git push origin vX.X.X
+#manually add relase on github
 
+# to publish on pyPI
+uv publish
 ```
+
+## 2026-04-24
+
+Writing a fetch function for the climate variables that returns the data locally rather than pushing it to an instance. This allows it to be used in other instances. It probably makes sense to combine this with the import function and then just send one POST rather than multiple? REalistically the three month updates are relatively small and larger ones would be done manually. Thsi does invovle turning files from datafames to json and back again, but I don't think that will be much overhead really. Or I could just drop that from the individual fetch files since it is very easy to turn into a json format.
+
+NEW WORKFLOW: fetch_* functions return a pandas dataFrame. This is then turned into a json file to POST to DHIS2. I could eventually split these up or apply a function to the lsit if I wanted, but it makes sense to have them return dataFrames rather than going back and forth and basically just only use JSON when posting.
+
+I have created a function `fetch_climate_gee` that I now just need to link into the import function. Soemthign isn't working quite in the testing of it for the proportionFire but I'm not super sure why, it may just be due to dataquality, but I thought it all got filled in kind of automatically. The test works now, just needed to reload the package.
+
+**TO DO:**
+- ~~test fetch_climate_gee~~
+- update import_pridec_climate to use fetch_climate_gee. Update tests too
 
 
 ## 2026-04-23
@@ -33,9 +47,9 @@ Turned off the GHA becuase it was using a lot of minutes and wasn't really neces
 Working on things corresponding to [issue #6](https://github.com/Pivot-Madagascar/pridec_gee/issues/6), specifically being able to select variables in the importation step and fetch steps.
 
 **TO DO**:
-- add variables to individual fetch functions
-- add variables to import_ function
-- write seperate fetch function to do multiple at once
+- ~~add variables to individual fetch functions~~
+- ~~add variables to import_ function~~
+- write seperate fetch function to do multiple at once and combine into a Pandas DF
 
 ## 2026-04-20
 

@@ -29,4 +29,4 @@ def test_modis_aod_downloads(test_polygons, gee_service_account, gee_key):
 
     output = fetch_modis_aod(orgUnit, date_range)
 
-    assert output['dataValues'][2]['value'] == 84.1799
+    assert output['value'][2] == 84.1799

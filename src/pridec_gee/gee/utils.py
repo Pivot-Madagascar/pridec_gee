@@ -242,7 +242,7 @@ def validate_variables(input_vars, allowed_vars):
     invalid = set(input_vars) - set(allowed_vars)
     if invalid:
         raise ValueError(
-            f"Invalid variables specified: {sorted(invalid)}"
+            f"Invalid variables specified: {sorted(invalid)}\n"
             f"Allowed variables: {sorted(allowed_vars)}"
         )
 

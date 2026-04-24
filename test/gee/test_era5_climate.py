@@ -30,8 +30,8 @@ def test_era5_climate_downloads(test_polygons, gee_service_account, gee_key):
 
     output = fetch_era5_climate(orgUnit, date_range, variables = ["pridec_climate_temperatureMean"])
 
-    assert output['dataValues'][2]['value'] == 23.8703
-    assert all(item["dataElement"] == "pridec_climate_temperatureMean" for item in output['dataValues'])
+    assert output['value'][2] == 23.8703
+    assert all(output['dataElement']=="pridec_climate_temperatureMean")
 
 def test_era5_climate_variableSelection(test_polygons, gee_service_account, gee_key):
         #initialize 

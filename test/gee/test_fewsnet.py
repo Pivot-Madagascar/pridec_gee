@@ -28,4 +28,4 @@ def test_fewsnet_downloads(test_polygons, gee_service_account, gee_key):
     }
 
     output = fetch_fewsnet_windspeed(orgUnit, date_range)
-    assert output['dataValues'][1]['value'] == 3.7147
+    assert output['value'][1] == 3.7147

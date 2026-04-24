@@ -28,4 +28,4 @@ def test_sen1_flood_downloads(test_ricefields, gee_service_account, gee_key):
 
     output = fetch_sen1_flood(rice_features=rice_fields, date_range=date_range, test_run=True)
 
-    assert output['dataValues'][14]['value'] == 0.182123   
+    assert output['value'][14] == 0.182123   

@@ -29,4 +29,4 @@ def test_modis_fire_downloads(test_polygons, gee_service_account, gee_key):
 
     output = fetch_modis_fire(orgUnit, date_range)
 
-    assert output['dataValues'][0]['value'] == 0.008814
+    assert output['value'][0] == 0.008814

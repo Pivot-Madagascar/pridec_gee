@@ -15,6 +15,7 @@ from .dhis2.delete_historic_climate import delete_historic_climate
 from .dhis2.post_climate import post_climate
 
 from .import_pridec_climate import import_pridec_climate
+from .fetch_climate_gee import fetch_climate_gee
 
 
 __all__ = [
@@ -29,7 +30,9 @@ __all__ = [
     "get_dhis_geojson",
     "delete_historic_climate",
     "post_climate",
-    "import_pridec_climate"
+    "import_pridec_climate",
+    "fetch_climate_gee",
+    AVAILABLE_VARIABLES
     ]
 
 package_logger = logging.getLogger(__name__)

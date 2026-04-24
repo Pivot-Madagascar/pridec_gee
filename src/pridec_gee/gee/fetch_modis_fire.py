@@ -17,12 +17,16 @@ def fetch_modis_fire(
             - 'start_date_gee': YYYY-MM-DD string of start date
             - 'end_date_gee': YYYY-MM-DD string of end date
 
-    Returns:
-        list of dict: Each dict represents a climate measurement with fields:
+    Returns: 
+        pandas dataframe with columns:
             - 'orgUnit': organization unit ID
             - 'period': period of observation (YYYYMM)
             - 'value': climate value (e.g., temperature, precipitation)
-            - 'dataElement': corresponding DHIS2 data element code
+            - 'dataElement': corresponding DHIS2 data element code (pridec_climate_*)
+        Can be turned into a DHIS2 formatted json file with:
+                df_dict = {
+                    "dataValues": df_long.to_dict(orient="records")
+                }
     """
 
     ic = ee.ImageCollection("MODIS/061/MYD14A2").filterBounds(orgUnit)
@@ -97,10 +101,7 @@ def fetch_modis_fire(
     df_long['value'] = df_long['value'].round(6)
     df_long['period'] = df_long['period'].astype(str)
 
-    #turn into a json file
-    df_dict = {
-        "dataValues": df_long.to_dict(orient="records")
-    }
+    df_long = df_long.reset_index(drop=True)
 
-    return df_dict
+    return df_long
 
