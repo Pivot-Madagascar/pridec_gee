@@ -1,11 +1,14 @@
 import ee
 import pandas as pd
 
-from .utils import month_agg_sp_mean, add_tempC, add_rh, add_dewtempC
+from .utils import month_agg_sp_mean, add_tempC, add_rh, add_dewtempC, validate_variables
+
+ERA5_VARIABLES = ["pridec_climate_temperatureMean", "pridec_climate_precipitation", "pridec_climate_relHumidity"]
 
 def fetch_era5_climate(
     orgUnit: ee.FeatureCollection,
     date_range: dict[str, str],
+    variables: list[str] = ERA5_VARIABLES
 ):
     """Extract temperature, precipitation, and relative humidity from ERA5 data.
 
@@ -17,15 +20,23 @@ def fetch_era5_climate(
         date_range: Dictionary containing start and end dates with keys:
             - 'start_date_gee': YYYY-MM-DD string of start date
             - 'end_date_gee': YYYY-MM-DD string of end date
+        variables: variables to be extracted, based on DHIS2 code 
+            Options: ["pridec_climate_temperatureMean", "pridec_climate_precipitation", "pridec_climate_relHumidity"]. Default is all.
 
-    Returns:
-        list of dict: Each dict represents a climate measurement with fields:
+    Returns: 
+        pandas dataframe with columns:
             - 'orgUnit': organization unit ID
             - 'period': period of observation (YYYYMM)
             - 'value': climate value (e.g., temperature, precipitation)
-            - 'dataElement': corresponding DHIS2 data element code
+            - 'dataElement': corresponding DHIS2 data element code (pridec_climate_*)
+        Can be turned into a DHIS2 formatted json file with:
+                df_dict = {
+                    "dataValues": df_long.to_dict(orient="records")
+                }
     """
 
+    validate_variables(input_vars = variables,
+                       allowed_vars= ERA5_VARIABLES)
 
     ic = ee.ImageCollection("ECMWF/ERA5_LAND/DAILY_AGGR").filterBounds(orgUnit) \
     .map(add_tempC).map(add_dewtempC).map(add_rh)
@@ -55,9 +66,8 @@ def fetch_era5_climate(
     df_long['value'] = df_long['value'].round(4)
     df_long['period'] = df_long['period'].astype(str)
 
-    #turn into a json file
-    df_dict = {
-        "dataValues": df_long.to_dict(orient="records")
-    }
+    #subset based on variable selection
+    df_long = df_long[df_long['dataElement'].isin(variables)]
+    df_long = df_long.reset_index(drop=True)
 
-    return df_dict
+    return df_long

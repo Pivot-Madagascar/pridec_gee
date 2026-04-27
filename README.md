@@ -75,6 +75,13 @@ sudo -u postgres pg_dump dhis2 | gzip > NAME_OF_FILE.sql.gz
 
 ### Extract climate vairables
 
-Individual climate variables can be extracted using the `fetch_*` functions by providing a `FeatureCollection` of the orgUnits and a dateRange to extract.  An example python script using the DHIS2 play instance is in [`docs/example.py`](docs/example.py).
+Individual climate variables can be extracted using the `fetch_*` functions by providing a `FeatureCollection` of the orgUnits, a dateRange to extract, and the name of variables. Available variables are listed under `AVAILABLE_VARIABLES`.  An example python script using the DHIS2 play instance is in [`docs/example.py`](docs/example.py).
 
 The `import_pridec_climate` function runs the full PRIDE-C climate variable extraction and importation process if your DHIS2 instance contains the appropriate metadata structure.
+
+# Available variables
+
+```
+from pridec_gee import AVAILABLE_VARIABLES
+print(AVAILABLE_VARIABLES)
+```

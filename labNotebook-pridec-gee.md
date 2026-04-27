@@ -6,15 +6,14 @@
 `pip install -r requirements`: install requirements
 `source .venv/bin/activate`: activate venv
 `pip install -e .`: install editable for during development
-`pytest -vv`: run all pytests in verbose mode
+`pytest path/to/file -vv`: run all pytests in verbose mode
 `uv run coverage run -m pytest -v`: pytest via uv
 `uv run ruff check`: code formatting
 
-## To Publish via GH Actions
+## To Publish a release
 
 ```
 #PR into main branch
-
 # update version in toml
 git add pyproject.toml
 git commit -m "update version to X.X.X"
@@ -22,15 +21,47 @@ git push
 
 git tag vX.X.X
 git push origin vX.X.X
+#manually add relase on github
 
+# to publish on pyPI
+uv publish
 ```
 
+## 2026-04-24
+
+Writing a fetch function for the climate variables that returns the data locally rather than pushing it to an instance. This allows it to be used in other instances. It probably makes sense to combine this with the import function and then just send one POST rather than multiple? REalistically the three month updates are relatively small and larger ones would be done manually. Thsi does invovle turning files from datafames to json and back again, but I don't think that will be much overhead really. Or I could just drop that from the individual fetch files since it is very easy to turn into a json format.
+
+NEW WORKFLOW: fetch_* functions return a pandas dataFrame. This is then turned into a json file to POST to DHIS2. I could eventually split these up or apply a function to the lsit if I wanted, but it makes sense to have them return dataFrames rather than going back and forth and basically just only use JSON when posting.
+
+I have created a function `fetch_climate_gee` that I now just need to link into the import function. Soemthign isn't working quite in the testing of it for the proportionFire but I'm not super sure why, it may just be due to dataquality, but I thought it all got filled in kind of automatically. The test works now, just needed to reload the package.
+
+Updated import_pridec_climate to also use this workflow. Hopefully this helps reduce duplication a bit.
+
+Updated example document to show how to fetch variables
+
+**TO DO:**
+- ~~test fetch_climate_gee~~
+- ~~update import_pridec_climate to use fetch_climate_gee. Update tests too~~
+
+
+## 2026-04-23
+
+Turned off the GHA becuase it was using a lot of minutes and wasn't really necessary for publishing. Using versions and releases manually now.
+
+Working on things corresponding to [issue #6](https://github.com/Pivot-Madagascar/pridec_gee/issues/6), specifically being able to select variables in the importation step and fetch steps.
+
+**TO DO**:
+- ~~add variables to individual fetch functions~~
+- ~~add variables to import_ function~~
+- write seperate fetch function to do multiple at once and combine into a Pandas DF
 
 ## 2026-04-20
 
 Getting pytests working if I can. Added coverage checker and github actions. 
 
 The github actions will run the tests on any PR to the main branch. I also created something for automatic publishing to PyPI and for github releases. I just need to do a quick test to be sure it works. Created a seperate branch to test the PR workflow.
+
+Everythign works but I need to add a PAT that allows for posting releases for the github action to work I think: https://docs.github.com/en/rest/releases/releases?apiVersion=2026-03-10#create-a-release
 
 **TO DO:**
 - publish v1.0.0

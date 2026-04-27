@@ -2,12 +2,15 @@ import ee
 import pandas as pd
 
 
-from .utils import month_agg_sp_mean
+from .utils import month_agg_sp_mean, validate_variables
 from .calc_date_range import enforce_two_month_lag
+
+FEWSNET_VARIABLES = ["pridec_climate_windspeed"]
 
 def fetch_fewsnet_windspeed(
     orgUnit: ee.FeatureCollection,
     date_range: dict[str, str],
+    variables: list[str] = FEWSNET_VARIABLES
 ):
     """Extract windspeed from FEWSNET data.
 
@@ -19,14 +22,22 @@ def fetch_fewsnet_windspeed(
         date_range: Dictionary containing start and end dates with keys:
             - 'start_date_gee': YYYY-MM-DD string of start date
             - 'end_date_gee': YYYY-MM-DD string of end date
+        variables: variables to be extracted, based on DHIS2 code 
+            Options: ["pridec_climate_windspeed"]. Default is all.
 
-    Returns:
-        list of dict: Each dict represents a climate measurement with fields:
+    Returns: 
+        pandas dataframe with columns:
             - 'orgUnit': organization unit ID
             - 'period': period of observation (YYYYMM)
             - 'value': climate value (e.g., temperature, precipitation)
-            - 'dataElement': corresponding DHIS2 data element code
+            - 'dataElement': corresponding DHIS2 data element code (pridec_climate_*)
+        Can be turned into a DHIS2 formatted json file with:
+                df_dict = {
+                    "dataValues": df_long.to_dict(orient="records")
+                }
     """
+    validate_variables(input_vars = variables,
+                       allowed_vars= FEWSNET_VARIABLES)
 
     ic = ee.ImageCollection("NASA/FLDAS/NOAH01/C/GL/M/V001").filterBounds(orgUnit)
 
@@ -36,7 +47,7 @@ def fetch_fewsnet_windspeed(
     fxparams = {
     'reducer': ee.Reducer.mean(),  
     'bands': ['Wind_f_tavg'],  
-    'bandsRename': ["pridec_climate_windSpeed"] 
+    'bandsRename': ["pridec_climate_windspeed"] 
     }
 
     result = month_agg_sp_mean(ic, orgUnit, date_range['start_date_gee'], date_range['end_date_gee'], fxparams)
@@ -56,9 +67,13 @@ def fetch_fewsnet_windspeed(
     df_long['value'] = df_long['value'].round(4)
     df_long['period'] = df_long['period'].astype(str)
 
-    #turn into a json file
-    df_dict = {
-        "dataValues": df_long.to_dict(orient="records")
-    }
+    #subset based on variable selection
+    df_long = df_long[df_long['dataElement'].isin(variables)]
+    df_long = df_long.reset_index(drop=True)
 
-    return df_dict
+    #turn into a json file
+    # df_dict = {
+    #     "dataValues": df_long.to_dict(orient="records")
+    # }
+
+    return df_long

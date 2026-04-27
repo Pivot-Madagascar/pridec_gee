@@ -1,6 +1,6 @@
 import ee
 import os
-from pridec_gee import fetch_era5_climate, get_dhis_geojson
+from pridec_gee import fetch_era5_climate, get_dhis_geojson, fetch_climate_gee, AVAILABLE_VARIABLES
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -11,7 +11,7 @@ ee.Authenticate()
 ee.Initialize(project=GEE_PROJECT)
 
 #get polygons from DHIS2 instance
-DHIS_URL='https://play.im.dhis2.org/stable-2-42-4/'
+DHIS_URL="https://play.im.dhis2.org/stable-2-40-11/"
 DHIS_USER='admin'
 DHIS_PWD='district'
 
@@ -29,8 +29,21 @@ date_range = {
     "end_date_gee": "2025-04-30"
 }
 
+#fetch a single variable
 output = fetch_era5_climate(orgUnit, date_range)
 
 print(output)
 
-#formatted for DHIS2 import, can turn into a pandas dataframe with pandas.DataFrame(output['dataValues'])
+#fetch multiple variables
+print(AVAILABLE_VARIABLES)
+out_multiple = fetch_climate_gee(date_range = date_range, 
+                                 orgUnit=orgUnit,
+                                 variables = ['pridec_climate_mndwi', "pridec_climate_temperatureMean"])
+
+out_multiple.head()
+
+#to format for POSTing to DHIS2 instance, change to JSON dict called 'dataValues'
+out_json = {
+                    "dataValues": out_multiple.to_dict(orient="records")
+                }
+print(out_json)

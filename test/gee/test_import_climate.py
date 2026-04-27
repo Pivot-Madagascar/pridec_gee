@@ -1,6 +1,7 @@
 import ee
+import pytest
 
-from pridec_gee import import_pridec_climate
+from pridec_gee import import_pridec_climate, AVAILABLE_VARIABLES
 
 debug=False
 if debug:
@@ -45,6 +46,11 @@ def test_import_pridec_climate(test_ricefields, test_polygons, gee_service_accou
 
     import_pridec_climate(dhis_url=dhis_url, date_range=date_range, orgUnit=orgUnit,
                           rice_features=rice_fields, dhis_token=dhis_token, dryRun=True)
+    
+    with pytest.raises(ValueError, match="Invalid variable"):
+        import_pridec_climate(dhis_url=dhis_url, date_range=date_range, orgUnit=orgUnit, variables = ["pridec_climate_wrong"],
+                          rice_features=rice_fields, dhis_token=dhis_token, dryRun=True)
+    
 
 
 

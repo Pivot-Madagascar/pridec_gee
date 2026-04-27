@@ -27,4 +27,4 @@ def test_sen2_inds_downloads(test_polygons, gee_service_account, gee_key):
 
     output = fetch_sen2_indicators(orgUnit, date_range)
 
-    assert output['dataValues'][6]['value'] == -0.6555
+    assert output['value'][6] == -0.6555
