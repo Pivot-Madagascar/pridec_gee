@@ -15,7 +15,7 @@ if debug:
     dhis_token = os.getenv("DHIS_TOKEN")
     dhis_url = os.getenv("DHIS_URL")
     parent_ou = os.getenv("PARENT_OU")
-    OU_LEVEL = 5 #fokontany
+    OU_LEVEL = 6 #fokontany
     dryRun = True #default dryRun = True
 
     geojson_path = "test/data/test_polygons.geojson"
@@ -44,8 +44,14 @@ def test_import_pridec_climate(test_ricefields, test_polygons, gee_service_accou
         "end_date_gee": "2025-02-28"
     }
 
+    #saftey check to not run on production isntances
+    if dhis_url == 'http://localhost:8080/':
+         dryRun = False
+    else:
+         dryRun = True
+
     import_pridec_climate(dhis_url=dhis_url, date_range=date_range, orgUnit=orgUnit,
-                          rice_features=rice_fields, dhis_token=dhis_token, dryRun=True)
+                          rice_features=rice_fields, dhis_token=dhis_token, dryRun=dryRun)
     
     with pytest.raises(ValueError, match="Invalid variable"):
         import_pridec_climate(dhis_url=dhis_url, date_range=date_range, orgUnit=orgUnit, variables = ["pridec_climate_wrong"],

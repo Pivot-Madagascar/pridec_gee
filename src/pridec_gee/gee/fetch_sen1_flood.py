@@ -9,7 +9,7 @@ from .s1_ard.helper import add_ratio_lin, lin_to_db2
 def fetch_sen1_flood(
     rice_features: ee.FeatureCollection,
     date_range: dict[str, str],
-    test_run: bool = True,
+    dryRun: bool = True,
 ):
     """Extract Ricefield flooding proportion from Sentinel-1 data. This function is specific to ricefield data from Ifanadiana district (Pivot).
 
@@ -24,7 +24,7 @@ def fetch_sen1_flood(
         date_range: Dictionary with start and end dates:
             - 'start_date_gee': start date as YYYY-MM-DD
             - 'end_date_gee': end date as YYYY-MM-DD
-        test_run: If True, performs a test using only a small subset of images (default True).
+        dryRun: If True, performs a test using only a small subset of images (default True).
 
     Returns:
         pandas dataframe with columns:
@@ -106,7 +106,7 @@ def fetch_sen1_flood(
         )
     
     image_flood = s1_processed.map(threshold_flood)
-    if test_run:
+    if dryRun:
         image_list = image_flood.limit(3).toList(3)  #for testing
     else:
         image_list = image_flood.toList(image_flood.size())
@@ -114,7 +114,7 @@ def fetch_sen1_flood(
     n_image = image_list.size().getInfo()
     dfs = []
 
-    print(f"Extracting flood data for {n_image} images.")
+    print(f"Using dryRun = {dryRun}. Extracting flood data for {n_image} images.")
     
     for i in range(n_image):
         this_image = ee.Image(image_list.get(i))
