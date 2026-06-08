@@ -27,6 +27,10 @@ git push origin vX.X.X
 uv publish
 ```
 
+## 2026-06-08
+
+The ricefield flooding had a hardcoded dryRun when used via import_climate_pridec that meant it only ever used 3 images. This has now been fixed so that the dryRun variable is used throughout and more informative messages are printed.
+
 ## 2026-04-24
 
 Writing a fetch function for the climate variables that returns the data locally rather than pushing it to an instance. This allows it to be used in other instances. It probably makes sense to combine this with the import function and then just send one POST rather than multiple? REalistically the three month updates are relatively small and larger ones would be done manually. Thsi does invovle turning files from datafames to json and back again, but I don't think that will be much overhead really. Or I could just drop that from the individual fetch files since it is very easy to turn into a json format.

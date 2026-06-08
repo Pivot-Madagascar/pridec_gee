@@ -26,6 +26,6 @@ def test_sen1_flood_downloads(test_ricefields, gee_service_account, gee_key):
         "end_date_gee": "2025-02-28"
     }
 
-    output = fetch_sen1_flood(rice_features=rice_fields, date_range=date_range, test_run=True)
+    output = fetch_sen1_flood(rice_features=rice_fields, date_range=date_range, dryRun=True)
 
     assert output['value'][14] == 0.182123   

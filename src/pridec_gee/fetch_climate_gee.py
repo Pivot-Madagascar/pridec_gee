@@ -19,7 +19,8 @@ def fetch_climate_gee(
     date_range: dict[str, str],
     orgUnit: ee.FeatureCollection,
     variables: list[str] = AVAILABLE_VARIABLES,
-    rice_features: ee.FeatureCollection = None
+    rice_features: ee.FeatureCollection = None,
+    dryRun: bool = True
 ):
     """
     Process PRIDE-C climate variables on a GEE server and download locally
@@ -30,6 +31,7 @@ def fetch_climate_gee(
             representing the date range to download. Date format is YYYY-MM-DD
         variables: List of variables to import. See ``AVAILABLE VARIABLES`` for full list. Defaults to all
         rice_features: FeatureCollection of rice fields if download `pridec_climate_floodedRice` data.
+        dryRun: if True, performs shorter dryRuns of longer treatments (i.e. floodedRice)
 
     Returns:
         pandas dataframe with columns:
@@ -79,9 +81,12 @@ def fetch_climate_gee(
             logger.error("Argument ``rice_features`` must be provided to estimate Sen-1 Ricefield flooding dynamics")
             return
         
-        logger.info("Downloading pridec_climate_floodedRice. This can take 30-45 minutes depending on the date range")
+        if dryRun:
+            logger.info("Downloading pridec_climate_floodedRice using a DryRun. Only downloading a subset of images")
+        else:
+            logger.info("Downloading pridec_climate_floodedRice. This can take 30-45 minutes depending on the date range")
 
-        flood_df = fetch_sen1_flood(rice_features, date_range)
+        flood_df = fetch_sen1_flood(rice_features, date_range, dryRun = dryRun)
         all_vars.append(flood_df)
 
     #combine into one large dataframe to return

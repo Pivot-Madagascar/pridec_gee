@@ -43,7 +43,7 @@ def import_pridec_climate(
         dhis_user: Username for DHIS2 instance (optional).
         dhis_pwd: Password for DHIS2 instance (optional).
         dhis_token: Personal access token for DHIS2. Can be used instead of `dhis_user`/`dhis_pwd`.
-        dryRun: If True, performs a dry run without posting data. Defaults to True.
+        dryRun: If True, performs a dry run without posting data and using subsets from GEE. Defaults to True.
 
     Returns:
         requests.Response: Response object from POST request
@@ -72,7 +72,8 @@ def import_pridec_climate(
     climate_df = fetch_climate_gee(date_range = date_range,
                                    orgUnit = orgUnit,
                                    variables = variables,
-                                   rice_features =  rice_features)
+                                   rice_features =  rice_features,
+                                   dryRun = dryRun)
     
     climate_json = {
                     "dataValues": climate_df.to_dict(orient="records")

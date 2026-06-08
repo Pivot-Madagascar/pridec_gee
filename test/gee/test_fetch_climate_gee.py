@@ -37,7 +37,8 @@ def test_fetch_pridec_gee(test_ricefields, test_polygons, gee_service_account, g
         "end_date_gee": "2025-07-30"
     }
 
-    output = fetch_climate_gee(orgUnit = orgUnit, date_range = date_range, rice_features = rice_fields)
+    output = fetch_climate_gee(orgUnit = orgUnit, date_range = date_range, rice_features = rice_fields, dryRun = False)
 
     assert bool(output.query("period == '202504' and dataElement == 'pridec_climate_temperatureMean'")["value"].iloc[0] == 23.0288)
+    assert bool(output.query("period == '202507' and dataElement == 'pridec_climate_floodedRice' and orgUnit == 'nqlkol82K9z'")["value"].iloc[0] == 0.094126)
     assert set(output["dataElement"].unique()) == set(AVAILABLE_VARIABLES)
